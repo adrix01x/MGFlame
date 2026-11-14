@@ -12,7 +12,10 @@ function sphere(center, radii, color, sides = 18, rings = 12) {
   return Array.from({ length: sides * rings }, (_, index) => {
     const i = Math.floor(index / sides);
     const j = index % sides;
-    return { vertices: [point(i,j), point(i,j+1), point(i+1,j+1), point(i+1,j)], color };
+    const lat = Math.PI * ((i + .5) / rings - .5);
+    const lon = 2 * Math.PI * (j + .5) / sides;
+    const light = Math.max(0, .73 * Math.sin(lat) - .60 * Math.cos(lat) * Math.cos(lon) + .32 * Math.cos(lat) * Math.sin(lon));
+    return { vertices: [point(i,j), point(i,j+1), point(i+1,j+1), point(i+1,j)], color, light };
   });
 }
 
@@ -57,7 +60,7 @@ export function createScene(canvas, redraw) {
       }
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       context.clearRect(0, 0, width, height);
-      const scale = Math.min(width / 7.4, height / 4.4);
+      const scale = Math.min(width / 7.0, height / 4.65);
       const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
       const project = ([x,y,z]) => {
         const horizontal = x * cy + z * sy;
@@ -65,60 +68,71 @@ export function createScene(canvas, redraw) {
         const vertical = y * cp - depth * sp;
         const rotatedDepth = y * sp + depth * cp;
         const perspective = 9 / (9 - rotatedDepth);
-        return [width / 2 + horizontal * scale * perspective, height / 2 - vertical * scale * perspective, rotatedDepth];
+        return [width / 2 + horizontal * scale * perspective, height * .47 - vertical * scale * perspective, rotatedDepth];
       };
       const floor = -1.24;
       const faces = [];
+      const halos = [];
+      const addHalo = (center, size, color) => halos.push({center, size, color});
       if (key === "flex") {
-        const radius = (.22 + Math.min(8, Math.max(0, size)) * .095) * (1 - .56 * fraction);
-        faces.push(...sphere([0,0,0], [radius,radius,radius], /hept|oct|dec/i.test(fuel) ? "#d69251" : "#919fd7"));
-        faces.push(face([[0,0,0],[0,-1.23,0]], null, "#61706d"));
+        const radius = (.28 + Math.min(8, Math.max(0, size)) * .148) * (1 - .56 * fraction);
+        faces.push(...sphere([0,0,0], [radius,radius,radius], /hept|oct|dec/i.test(fuel) ? "#a6ddfa" : "#80c6dc", 24, 16));
+        faces.push(face([[0,0,0],[0,-1.23,0]], null, "#b7d6dc"));
         if (fraction > 0 && (!finish || fraction < 1)) {
           const glow = radius * (1.4 + Math.min(100, Math.max(0, oxygen)) / 60 + Math.sin(fraction * 21) * .09);
           const drift = Math.min(14, Math.max(0, flow)) * .018;
-          faces.push(...sphere([drift,.06,0], [glow+drift,glow*1.14,glow], "#f09a5630", 14, 9));
+          addHalo([drift,.06,0], glow * 1.9, "255,128,67");
+          faces.push(...sphere([drift,.06,0], [glow+drift,glow*1.14,glow], "#ff925010", 20, 14));
         }
       } else if (key === "aerosol") {
-        faces.push(face([[-2.55,-.75,-.8],[2.55,-.75,-.8],[2.55,-.75,.8],[-2.55,-.75,.8]], "#d5ded6", "#637464"));
-        faces.push(...sphere([-2,-.48,0],[.34,.22,.36], /kapton|tefl/i.test(fuel) ? "#b67f52" : "#858bb3"));
+        faces.push(face([[-2.55,-.75,-.8],[2.55,-.75,-.8],[2.55,-.75,.8],[-2.55,-.75,.8]], "#284253", "#6c98a9"));
+        faces.push(...sphere([-2,-.48,0],[.34,.22,.36], /kapton|tefl/i.test(fuel) ? "#d6e9ea" : "#80c6dc"));
         for (let i = 0; i < 20 && fraction > 0; i++) {
           const travel = (i / 20 + fraction * Math.min(2, Math.max(0, flow) / 8)) % 1;
           const radius = .04 + Math.min(.14, Math.max(0, aging) / 500) * travel;
-          faces.push(...sphere([-1.8 + travel * 4, -.24 + .58 * travel + .16 * Math.sin(i * 4), Math.cos(i * 2) * .56], [radius,radius,radius], "#7888c78c", 6, 4));
+          const position = [-1.8 + travel * 4, -.24 + .58 * travel + .16 * Math.sin(i * 4), Math.cos(i * 2) * .56];
+          addHalo(position, radius * 4, "102,201,255");
+          faces.push(...sphere(position, [radius,radius,radius], "#89dbff", 8, 5));
         }
       } else {
         const half = Math.min(2.8, Math.max(.5, length / 26));
         const edge = Math.min(1.15, Math.max(.14, sampleWidth / 48));
         const front = -half + fraction * half * 2;
         if (/rod|sphere|cilind|esfera/i.test(fuel)) {
-          faces.push(...sphere([0,-.15,0], [/sphere|esfera/i.test(fuel) ? edge * 1.5 : half,.33,edge], "#a0ada8"));
+          faces.push(...sphere([0,-.15,0], [/sphere|esfera/i.test(fuel) ? edge * 1.5 : half,.33,edge], "#a9d4dc"));
         } else {
-          faces.push(face([[-half,-.15,-edge],[half,-.15,-edge],[half,-.15,edge],[-half,-.15,edge]], /pmma|acril/i.test(fuel) ? "#9faec2" : "#c6cfc4", "#626e63"));
-          faces.push(face([[-half,-.142,-edge],[front,-.142,-edge],[front,-.142,edge],[-half,-.142,edge]], "#746457"));
+          faces.push(face([[-half,-.15,edge],[half,-.15,edge],[half,-.30,edge],[-half,-.30,edge]], "#537686", "#658e9a"));
+          faces.push(face([[half,-.15,edge],[half,-.15,-edge],[half,-.30,-edge],[half,-.30,edge]], "#456779", "#658e9a"));
+          faces.push(face([[-half,-.15,-edge],[half,-.15,-edge],[half,-.15,edge],[-half,-.15,edge]], /pmma|acril/i.test(fuel) ? "#9bbad8" : "#b1d6df", "#7aa7bb"));
+          faces.push(face([[-half,-.142,-edge],[front,-.142,-edge],[front,-.142,edge],[-half,-.142,edge]], "#74544b"));
         }
         if (fraction > 0 && (!finish || fraction < 1)) {
           for (let i = 0; i < 5; i++) {
             const h = .2 + Math.min(100, Math.max(0, oxygen)) / 155 + .10 * Math.sin(i * 1.9 + fraction * 30);
-            faces.push(...sphere([front,.19,edge * (i / 2 - 1)],[.17,h,.14],"#f2974f72",8,6));
+            const position = [front,.19,edge * (i / 2 - 1)];
+            addHalo(position, h * 1.7, "255,134,65");
+            faces.push(...sphere(position,[.17,h,.14],"#ffae6595",10,8));
           }
         }
         const airflow = reverse ? -1 : 1;
         if (flow > 0) for (let i = 0; i < 14; i++) {
           const x = airflow * (((i * .79 + fraction * Math.min(flow, 80) / 2.7) % 6.6) - 3.3);
           const z = (i % 4) * .43 - .65;
-          faces.push(face([[x,.9 - i%3*.19,z],[x+airflow*.19,.9 - i%3*.19,z]],null,"#5868b3"));
+          const y = .9 - i%3*.19;
+          const tip = x + airflow * .26;
+          faces.push(face([[x,y,z],[tip,y,z],[tip-airflow*.09,y+.055,z]],null,"#7bcdf3"));
         }
       }
       for (let i = -4; i <= 4; i++) {
-        faces.push(face([[i*.74,floor,-2.9],[i*.74,floor,2.9]], null, "#cbd1c7"));
-        faces.push(face([[-3.15,floor,i*.65],[3.15,floor,i*.65]], null, "#cbd1c7"));
+        faces.push(face([[i*.74,floor,-2.9],[i*.74,floor,2.9]], null, i === 0 ? "#71acbc61" : "#72a6b52f"));
+        faces.push(face([[-3.15,floor,i*.65],[3.15,floor,i*.65]], null, i === 0 ? "#71acbc61" : "#72a6b52f"));
       }
       const projected = faces.map(({ vertices, ...style }) => {
         const points = vertices.map(project);
         return { ...style, points, depth: points.reduce((sum, p) => sum + p[2], 0) / points.length,
-          floor: vertices[0][1] === floor, mesh: vertices.length === 4 && vertices[0][1] !== vertices[2][1] };
+          floor: vertices[0][1] === floor };
       }).sort((a,b) => Number(b.floor)-Number(a.floor) || a.depth-b.depth);
-      for (const { points, color, stroke, mesh } of projected) {
+      for (const { points, color, stroke, light } of projected) {
         context.beginPath();
         context.moveTo(...points[0].slice(0,2));
         for (const [x,y] of points.slice(1)) context.lineTo(x,y);
@@ -126,15 +140,25 @@ export function createScene(canvas, redraw) {
           context.closePath();
           context.fillStyle = color;
           context.fill();
-          if (mesh && color.length === 7) {
-            const [a,b,c] = points;
-            const shade = (b[0]-a[0]) * (c[1]-a[1]) - (b[1]-a[1]) * (c[0]-a[0]);
-            context.fillStyle = shade > 0 ? "#22324625" : "#ffffff25";
+          if (light !== undefined && color.length === 7) {
+            context.fillStyle = light < .55 ? `rgba(12,32,54,${.64 - light})` : `rgba(240,250,255,${light - .49})`;
             context.fill();
           }
         }
         if (stroke) { context.strokeStyle = stroke; context.stroke(); }
       }
+      context.globalCompositeOperation = "screen";
+      for (const { center, size, color } of halos) {
+        const [x,y,depth] = project(center);
+        const radius = size * scale * 9 / (9 - depth);
+        const glow = context.createRadialGradient(x,y,0,x,y,radius);
+        glow.addColorStop(0, `rgba(${color},.40)`);
+        glow.addColorStop(.4, `rgba(${color},.14)`);
+        glow.addColorStop(1, `rgba(${color},0)`);
+        context.fillStyle = glow;
+        context.fillRect(x-radius,y-radius,radius*2,radius*2);
+      }
+      context.globalCompositeOperation = "source-over";
     },
   };
 }

@@ -1,15 +1,29 @@
-.simulation-layout { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(285px,1fr); gap:14px; align-items:start; }
+.simulation-layout { display:grid; grid-template-columns:minmax(0,1.9fr) minmax(285px,1fr); gap:15px; align-items:start; }
 .sim-stage, .sim-controls { padding:17px; }
-.sim-stage-head { display:flex; justify-content:space-between; align-items:start; gap:10px; margin-bottom:12px; }
-.sim-stage-head h2, .sim-controls h2 { font-size:23px; }
-.sim-viewport { position:relative; border:1px solid #dce0d6; border-radius:10px; overflow:hidden; background:radial-gradient(ellipse at center,#fcfcf6,#e0e4dc); }
-.sim-viewport canvas { display:block; width:100%; height:clamp(240px,38vw,450px); cursor:grab; touch-action:none; }
+.sim-stage-head { display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:8px; margin-bottom:13px; }
+.sim-stage-head h2, .sim-controls h2 { font-size:clamp(19px,2vw,27px); }
+.sim-stage-head h2 { margin-top:3px; }
+.sim-viewport { position:relative; isolation:isolate; border:1px solid #203844; border-radius:11px; overflow:hidden; background:radial-gradient(ellipse at 50% 42%,#183648,#0d202c 56%,#09141e); }
+.sim-viewport::before {
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:radial-gradient(circle,#80b4c52a 1px,transparent 1.5px) 0 0 / 21px 21px;
+  mask-image:radial-gradient(ellipse at center,#000,transparent 86%);
+}
+.sim-viewport canvas { display:block; width:100%; height:clamp(285px,34vw,448px); cursor:grab; touch-action:none; }
 .sim-viewport canvas:active { cursor:grabbing; }
-.sim-overlay { position:absolute; top:10px; left:10px; background:#f7f8f3; border-radius:6px; padding:5px 8px; font-size:11px; pointer-events:none; }
-.sim-camera { position:absolute; right:10px; bottom:10px; display:flex; gap:4px; }
+.sim-overlay { position:absolute; top:13px; left:13px; color:#e5f6fb; background:#173647; border:1px solid #407184; border-radius:6px; padding:6px 9px; font-size:11px; font-weight:650; pointer-events:none; }
+.sim-orbit-hint { position:absolute; top:15px; right:13px; color:#b0c8d3; font:400 10px/1.5 var(--mono); pointer-events:none; }
+.sim-camera { position:absolute; right:11px; bottom:11px; display:flex; gap:4px; }
+.dashboard .sim-camera .icon-button { background:#173647; border-color:#407184; color:#e5f6fb; }
+.dashboard .sim-camera .icon-button:hover { background:#265269; }
+.sim-legend { position:absolute; bottom:10px; left:12px; right:116px; display:flex; flex-wrap:wrap; align-items:center; gap:5px 12px; margin:0; list-style:none; padding:0; pointer-events:none; }
+.sim-legend li { display:inline-flex; align-items:center; gap:5px; color:#ddecf3; font-size:10px; }
+.sim-swatch { width:8px; height:8px; border-radius:50%; display:inline-block; background:#c2e5eb; }
+.sim-swatch.heat { background:#ffa36e; box-shadow:0 0 7px #ffa36e85; }
+.sim-swatch.flow { background:#77c6ff; }
 .sim-transport { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:12px; }
 .sim-transport input { flex:1; min-width:80px; }
-.sim-transport output { min-width:62px; text-align:right; font-size:10px; }
+.sim-transport output { min-width:62px; text-align:right; font-size:11px; }
 .sim-transport select, .sim-controls select { border-radius:7px; border:1px solid #dce0d6; background:#f7f8f3; padding:7px; min-width:0; }
 .sim-controls { display:grid; gap:12px; }
 .sim-controls label { display:grid; gap:6px; font-size:12px; font-weight:620; min-width:0; }
@@ -17,13 +31,31 @@
 .sim-controls .segmented { width:max-content; background:#e3e6de; }
 .sim-controls .segmented button { min-height:32px; padding-inline:10px; }
 .simulation-layout input[type="range"] { accent-color:#616ccb; }
-.sim-metrics { border-top:1px solid #dce0d6; font-size:12px; }
-.sim-metrics div { display:flex; justify-content:space-between; align-items:start; gap:8px; padding:6px 0; border-bottom:1px solid #dce0d6; }
-.sim-metrics dd { margin:0; font-family:var(--mono); text-align:right; }
+.sim-guide { border-top:1px solid #d7ddd2; margin-top:14px; padding-top:12px; }
+.sim-guide h3, .sim-field-heading h3 { font-size:14px; }
+.sim-guide p { color:#465355; font-size:12px; line-height:1.55; margin-top:8px; min-height:2.7em; }
+.sim-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-top:8px; }
+.sim-steps button { font-size:11px; font-weight:620; padding:7px 3px; border:1px solid #d9ded5; border-radius:6px; color:#414e4a; background:#f6f7f1; }
+.sim-steps button:hover { border-color:#547486; }
+.sim-steps button[aria-pressed="true"] { color:#f1faff; border-color:#254a5d; background:#254a5d; }
+.sim-summary { display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11px; }
+.sim-summary div { padding:8px; background:#f7f8f3; border:1px solid #dee3d9; border-radius:7px; min-width:0; }
+.sim-summary dt { color:#53615a; }
+.sim-summary dd { margin:4px 0 0; font-weight:670; overflow-wrap:anywhere; }
+.sim-field-heading { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px; margin-bottom:6px; }
+#sim-details { border:1px solid #dce0d6; border-radius:7px; background:#e8ede4; padding:8px; }
+#sim-details summary { cursor:pointer; font-size:12px; font-weight:640; }
+#sim-details[open] summary { margin-bottom:8px; }
 .sim-note { color:#4c5677; background:#e3e6f4; padding:8px; border-radius:7px; font-size:11px; line-height:1.5; }
-.sim-fields { display:grid; gap:8px; max-height:380px; overflow:auto; padding:3px 5px; }
+.sim-fields { display:grid; gap:8px; max-height:330px; overflow:auto; padding:3px 5px; }
+.sim-fields small { font-size:10px; color:#53615a; font-weight:400; line-height:1.35; }
 .sim-fields input { width:100%; min-width:0; padding:7px; border:1px solid #d0d5cd; background:#f8f9f6; border-radius:6px; }
 .sim-fields input[readonly] { background:#e7ebe3; }
 @media (max-width:850px) {
   .simulation-layout { grid-template-columns:1fr; }
+}
+@media (max-width:520px) {
+  .sim-stage, .sim-controls { padding:11px; }
+  .sim-orbit-hint { display:none; }
+  .sim-transport input { flex-basis:100%; order:1; margin:4px 0; }
 }
