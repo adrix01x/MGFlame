@@ -1,0 +1,2 @@
+# NASA source files are byte-for-byte copies of the archived originals.
+dist/data/original/** -text
