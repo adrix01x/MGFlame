@@ -1,10 +1,11 @@
 import { icon, initIcons } from "./icons.mjs";
 import { mountSimulation } from "./simulation.mjs";
+import { mountShip } from "./ship.mjs";
 import { sources, evidence, incidents, transfers, topics, missions } from "./data/evidence.mjs";
 import { modeling, modelingCsv, controlResearch } from "./data/objectives.mjs";
 import { answerQuestion, catalogStats, countFlex, missionScore, normalize, outcomeLabels, rankEvidence } from "./analysis.mjs";
 
-const pages = { inicio: "Inicio", resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
+const pages = { inicio: "Inicio", resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", nave: "Nave tripulada", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
 const fuelLabels = { all: "Todos", Methanol: "Metanol", Heptane: "Heptano" };
 const outcomeColors = { Extinction: "orange", Disruption: "teal", Completion: "purple" };
 const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
@@ -46,6 +47,12 @@ function missionButtons() {
 
 let viewerModule;
 
+function loadViewer() {
+  return viewerModule ??= import("./assets/model-viewer.min.js").then(({ ModelViewerElement }) => {
+    ModelViewerElement.dracoDecoderLocation = new URL("./assets/draco/", import.meta.url).href;
+  });
+}
+
 function drawHome() {
   const stats = catalogStats(studies);
   main.innerHTML = `
@@ -62,6 +69,7 @@ function drawHome() {
       <a class="card" href="#resumen"><span class="metric-icon purple">${icon("chart")}</span><div><h2>Prioriza la evidencia</h2><p>Explora hallazgos para cinco entornos habitables.</p></div>${icon("arrow-right")}</a>
       <a class="card" href="#experimentos"><span class="metric-icon teal">${icon("database")}</span><div><h2>Extrae datos para modelado</h2><p>Filtra ${stats.observations} observaciones de ${studies.length} investigaciones de NASA.</p></div>${icon("arrow-right")}</a>
       <a class="card" href="#controles"><span class="metric-icon blue">${icon("shield")}</span><div><h2>Explora controles de seguridad</h2><p>Consulta estudios sobre detección, extinción y protección.</p></div>${icon("arrow-right")}</a>
+      <a class="card" href="#nave"><span class="metric-icon orange">${icon("planet")}</span><div><h2>Inspecciona la nave</h2><p>Explora los materiales y sistemas de una cápsula en 3D.</p></div>${icon("arrow-right")}</a>
     </nav>`;
 }
 
@@ -122,9 +130,7 @@ function drawOverview() {
     for (const button of viewer.parentElement.querySelectorAll("[data-camera]")) button.disabled = false;
     document.querySelector("#station-hint").textContent = "Arrastra para girar · Desplaza para acercar";
   }, { once: true });
-  (viewerModule ??= import("./assets/model-viewer.min.js").then(({ ModelViewerElement }) => {
-    ModelViewerElement.dracoDecoderLocation = new URL("./assets/draco/", import.meta.url).href;
-  })).catch(fallback);
+  loadViewer().catch(fallback);
 }
 
 function drawFlex() {
@@ -234,7 +240,7 @@ function drawIncidents() {
 }
 
 function drawControls() {
-  main.innerHTML = pageHead("INVESTIGACIÓN APLICADA", "Controles de seguridad", "Explora qué investigaciones pueden informar el diseño de controles en cabinas presurizadas y qué preguntas siguen abiertas.") + `
+  main.innerHTML = pageHead("INVESTIGACIÓN APLICADA", "Controles de seguridad", "Explora qué investigaciones pueden informar el diseño de controles en cabinas presurizadas y qué preguntas siguen abiertas.", `<a class="button button-outline" href="#nave">${icon("planet")} Inspeccionar nave 3D</a>`) + `
     <div class="control-research">${controlResearch.map(item => `<article class="card research-card">
       ${topicTag(item.topic)}<h2>${item.title}</h2><p>${item.question}</p>
       <p><strong>Qué validar.</strong> ${item.validation}</p>
@@ -361,7 +367,7 @@ function closeMenu() {
   document.querySelector("#menu-button").setAttribute("aria-expanded", "false");
 }
 
-let disposeSimulation;
+let disposePage;
 
 function route({ move = true } = {}) {
   const [key = "inicio", query] = (location.hash.slice(1) || "inicio").split("?");
@@ -374,9 +380,12 @@ function route({ move = true } = {}) {
     else link.removeAttribute("aria-current");
   });
   closeMenu();
-  disposeSimulation?.();
-  disposeSimulation = undefined;
-  ({ inicio: drawHome, resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies, new URLSearchParams(query).get("study")); }, controles: drawControls, incidentes: drawIncidents, fuentes: drawSources })[key]();
+  disposePage?.();
+  disposePage = ({
+    inicio: drawHome, resumen: drawOverview, experimentos: drawExperiments,
+    simulacion: () => mountSimulation(main, studies, new URLSearchParams(query).get("study")),
+    nave: () => mountShip(main, loadViewer), controles: drawControls, incidentes: drawIncidents, fuentes: drawSources,
+  })[key]();
   if (move && changed) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });

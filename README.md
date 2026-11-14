@@ -50,3 +50,13 @@ El alcance es la seguridad de los entornos habitables. La propulsión y los prop
 - **IA local.** Usa un clasificador multinomial de Naive Bayes entrenado con ejemplos en español para clasificar preguntas. Normaliza términos y sinónimos, da peso a coincidencias poco frecuentes y recupera hasta dos hallazgos de un corpus de síntesis documentadas. Usa cálculos directos en consultas de conteo o comparación. Las preguntas quedan en el navegador y la síntesis se limita al corpus incluido.
 
 Proyecto independiente. El visor utiliza el [modelo de la Estación Espacial Internacional de NASA Ames](https://science.nasa.gov/3d-resources/international-space-station-iss-a/).
+
+## Nave tripulada
+
+El módulo incluye tres GLB interpretativos descargables con fichas de materiales, protección térmica y sistemas de seguridad. La geometría se basa en las dimensiones y la arquitectura publicadas para Orion por NASA y ESA. La distribución interior es conceptual. Las propiedades tienen enlaces a sus fuentes y los objetivos de diseño se distinguen de los datos de referencia.
+
+Para regenerar los tres GLB con Python:
+
+```sh
+python scripts/build_orion_model.py
+```

@@ -1,0 +1,123 @@
+.ship-intro {
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  flex-wrap:wrap;
+  gap:14px;
+  margin:6px 0 17px;
+}
+.ship-intro .overline { color:#4c645d; }
+.ship-intro h1 { font-size:clamp(32px,4.1vw,60px); letter-spacing:-.07em; line-height:1; margin:6px 0 8px; }
+.ship-intro p { max-width:62ch; color:#4d5b54; line-height:1.55; font-size:13px; }
+.ship-layout { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(295px,1fr); align-items:start; gap:13px; }
+.ship-stage { min-width:0; padding:13px; }
+.ship-stage-toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:0 0 12px; }
+.ship-stage-toolbar h2 { margin-top:3px; font-size:22px; line-height:1.1; }
+.ship-tabs { display:flex; flex-wrap:wrap; align-items:center; max-width:100%; gap:3px; border-radius:8px; background:#e0e5dc; border:1px solid #d9dfd4; padding:3px; }
+.ship-tabs button { display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; border-radius:5px; min-height:29px; padding:3px 7px; font-size:10px; font-weight:650; color:#4b5a52; line-height:1.15; }
+.ship-tabs button:hover { background:#f6f8f3; }
+.ship-tabs button[aria-pressed="true"] { background:#f8faf6; color:#233f3c; border-color:#d3dbd6; box-shadow:0 1px 2px #18292510; }
+.ship-tabs .icon { width:13px; height:13px; }
+.ship-viewport {
+  position:relative;
+  isolation:isolate;
+  min-height:clamp(365px,39vw,560px);
+  overflow:hidden;
+  border:1px solid #213b4a;
+  border-radius:11px;
+  background:radial-gradient(ellipse at 52% 47%,#254351 0%,#142b37 41%,#0c1b26 72%,#08131d 100%);
+}
+.ship-viewport::before,.ship-viewport::after { position:absolute; content:""; pointer-events:none; }
+.ship-viewport::before {
+  z-index:-1; inset:0;
+  background:radial-gradient(circle,#9ec7d635 .7px,transparent 1.25px) 0 0 / 22px 22px;
+  mask-image:linear-gradient(115deg,#000,transparent 39%,transparent 62%,#000);
+}
+.ship-viewport::after {
+  z-index:-1; inset:12px;
+  background:
+    linear-gradient(#72a5b470,#72a5b470) top left / 15px 1px no-repeat,
+    linear-gradient(#72a5b470,#72a5b470) top left / 1px 15px no-repeat,
+    linear-gradient(#72a5b470,#72a5b470) bottom right / 15px 1px no-repeat,
+    linear-gradient(#72a5b470,#72a5b470) bottom right / 1px 15px no-repeat;
+}
+.ship-viewport .ship-viewer { position:absolute; inset:0; min-height:0; --progress-bar-height:2px; --progress-bar-color:#95dedf; }
+.ship-hotspot {
+  display:flex; align-items:center; gap:6px; min-height:28px; padding:0; border:0; color:#e4f5f3;
+  border-radius:20px; background:none; transform:translate(37%,var(--pin-offset,0)); text-align:left; outline-offset:4px;
+}
+.ship-hotspot:not([data-visible]) { opacity:0; visibility:hidden; pointer-events:none; }
+.ship-viewport:not(.ship-loaded) .ship-hotspot { visibility:hidden; }
+.ship-pin {
+  position:relative; display:grid; place-items:center; width:27px; height:27px; flex:0 0 27px; border-radius:50%;
+  color:#e4f5f3; background:#163740e8; border:1px solid #98d8da;
+  box-shadow:0 0 0 3px #baeaed30,0 2px 8px #09141c97; font:500 9px/1 var(--mono);
+}
+.ship-pin::before { content:""; position:absolute; right:100%; top:50%; width:15px; height:1px; background:#98d8da; }
+.ship-pin::after { content:""; position:absolute; right:calc(100% + 13px); top:calc(50% - 2px - var(--pin-offset,0px)); width:5px; height:5px; border-radius:50%; background:#b4eceb; }
+.ship-hotspot::before { content:""; position:absolute; left:-15px; top:50%; width:1px; height:max(var(--pin-offset,0px),calc(-1 * var(--pin-offset,0px))); transform:translateY(min(0px,calc(-1 * var(--pin-offset,0px)))); background:#98d8da; }
+.ship-bubble { display:none; padding:5px 7px; border-radius:5px; background:#102b36ef; color:#edf9f7; border:1px solid #83afb64f; box-shadow:0 2px 8px #09141c88; font-size:10px; line-height:1.2; white-space:nowrap; }
+.ship-hotspot:is([aria-pressed="true"],:hover,:focus-visible) { z-index:2; }
+.ship-hotspot:is([aria-pressed="true"],:hover,:focus-visible) .ship-bubble { display:block; }
+.ship-hotspot[aria-pressed="true"] .ship-pin { background:#b1e4de; color:#102d35; border-color:#c9f4f0; }
+.ship-model-status { position:absolute; bottom:13px; left:16px; max-width:calc(100% - 148px); color:#bbd4dc; pointer-events:none; font:400 9px/1.4 var(--mono); }
+.ship-camera { position:absolute; right:13px; bottom:12px; display:flex; gap:4px; }
+.dashboard .ship-camera .icon-button { width:31px; height:31px; background:#163341; color:#e0f3f5; border-color:#527785; }
+.dashboard .ship-camera .icon-button:hover:not(:disabled) { background:#284d5e; }
+.ship-model-footer { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px 10px; min-height:38px; padding:5px 1px 1px; color:#4d5b54; font-size:11px; }
+.ship-model-footer a { white-space:nowrap; }
+.ship-components { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; border-top:1px solid #d8ded4; padding-top:8px; }
+.ship-component {
+  display:grid; grid-template-columns:20px minmax(0,1fr) 13px; align-items:center; gap:6px; min-height:31px;
+  padding:3px 6px; border:1px solid transparent; border-radius:6px; color:#42584f; text-align:left; font-size:10px; background:#e8ece4;
+}
+.ship-component .mono { color:#51736a; font-size:9px; }
+.ship-component .icon { width:12px; }
+.ship-component:hover,.ship-component[aria-pressed="true"] { background:#dcebe4; border-color:#bfd4c8; color:#233f3c; }
+.ship-inspector { min-width:0; padding:15px; }
+.ship-part header { display:flex; align-items:center; gap:9px; }
+.ship-part header h2 { margin-top:2px; font-size:clamp(20px,2.05vw,29px); line-height:1.12; }
+.ship-part header .overline { color:#567168; }
+.ship-part-index { display:grid; place-items:center; background:#d9e9e1; border:1px solid #c4d9ce; color:#2b514a; border-radius:9px; width:39px; height:39px; flex:0 0 39px; font-size:13px; }
+.ship-part-summary,.ship-part p { font-size:12px; line-height:1.55; color:#43544c; }
+.ship-part-summary { margin:11px 0 9px; }
+.ship-reference { padding:8px 9px; border-radius:7px; background:#e1eae4; border:1px solid #d7e2d9; }
+.ship-reference strong { color:#2d4840; font-size:11px; }
+.ship-reference p { margin-top:3px; }
+.ship-specs { margin:9px 0 0; }
+.ship-specs > div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.55fr); gap:7px; align-items:start; padding:6px 0; border-bottom:1px solid #d9dfd5; font-size:11px; line-height:1.38; }
+.ship-specs dt { color:#526358; }
+.ship-specs dd { margin:0; color:#283e35; font-weight:620; overflow-wrap:anywhere; }
+.ship-part-check { margin:9px 0 0; }
+.ship-part-check .icon { width:13px; height:13px; color:#486d66; }
+.ship-part-check h3 { display:flex; align-items:center; gap:5px; color:#2d4941; font-size:12px; margin-bottom:2px; }
+.ship-citations { margin:10px 0 6px; padding-top:7px; border-top:1px solid #d9dfd5; }
+.ship-citations summary { font-size:11px; cursor:pointer; color:#34564c; font-weight:650; }
+.ship-citations ul { margin:5px 0 0; padding:0; list-style:none; }
+.ship-citations li + li { margin-top:2px; }
+.ship-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin:12px 0; }
+.ship-metric { display:flex; flex-direction:column; gap:4px; padding:11px 12px; color:#42574e; }
+.ship-metric:hover { background:#f7f8f4; }
+.ship-metric span { font-size:11px; font-weight:660; }
+.ship-metric strong { font-size:clamp(20px,2.4vw,31px); line-height:1.1; letter-spacing:-.055em; color:#273e35; }
+.ship-metric small { color:#50645b; font-size:10px; }
+.ship-metric .icon { width:11px; height:11px; }
+.ship-scope { display:flex; align-items:start; gap:10px; padding:13px; }
+.ship-scope h2 { font-size:17px; }
+.ship-scope p { color:#4d5b54; font-size:12px; line-height:1.55; margin-top:5px; }
+.ship-scope-links { display:flex; flex-wrap:wrap; gap:1px 12px; margin-top:5px; }
+@media (min-width:1050px) { .home-paths { grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media (max-width:850px) {
+  .ship-layout { grid-template-columns:1fr; }
+  .ship-viewport { min-height:clamp(330px,63vw,515px); }
+}
+@media (max-width:520px) {
+  .ship-intro h1 { font-size:36px; }
+  .ship-stage,.ship-inspector { padding:10px; }
+  .ship-stage-toolbar { gap:8px; }
+  .ship-viewport { min-height:330px; }
+  .ship-bubble { display:none !important; }
+  .ship-metric { padding:8px; }
+  .ship-metric span { font-size:10px; }
+  .ship-metric small { font-size:9px; }
+}
