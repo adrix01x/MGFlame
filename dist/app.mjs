@@ -43,43 +43,64 @@ function missionButtons() {
     `<button type="button" data-mission="${key}" aria-pressed="${state.mission === key}">${icon(symbols[key])}${item.label}</button>`).join("")}</div>`;
 }
 
+let viewerModule;
+
 function drawOverview() {
   const stats = catalogStats(studies);
   main.innerHTML = `
-    <section class="hero" aria-labelledby="intro-title">
-      <figure class="hero-image"><img src="assets/space-flame.jpg" alt="Llama esférica en microgravedad rodeada de partículas incandescentes"><figcaption><a href="https://science.nasa.gov/image-article/apod-2021-august-10-fire-in-space/" target="_blank" rel="noopener">LLAMA EN MICROGRAVEDAD · NASA ${icon("arrow-up-right")}</a></figcaption></figure>
-      <div class="hero-copy">
-        <span class="overline hero-kicker"><span></span> SEGURIDAD EN LA EXPLORACIÓN ESPACIAL</span>
-        <h1 id="intro-title">El fuego en <em>microgravedad</em></h1>
-        <p>Investiga cómo arde, se detecta y se extingue el fuego en el espacio con evidencia de NASA y un asistente de IA.</p>
-        <div class="hero-actions"><a href="#experimentos" class="button button-primary">Explorar experimentos ${icon("arrow-right")}</a><button class="button button-hero" type="button" data-action="assistant">${icon("spark")} Preguntar a la IA</button></div>
-      </div>
-    </section>
-    <section class="stats" aria-label="Cobertura del atlas">
-      ${stat("database", "orange", studies.length, "Tablas de NASA PSI", "CSV originales con DOI", "fuentes")}
-      ${stat("flask", "teal", stats.observations, "Registros de observación", "EEI y vehículos Cygnus", "experimentos")}
-      ${stat("clock", "purple", incidents.length, "Casos históricos", "Apollo 1 · Apollo 13 · Mir", "incidentes")}
-      ${stat("bulb", "blue", evidence.length, "Hallazgos clasificados", "Cinco temas de seguridad", null)}
-    </section>
-    <div class="overview-grid">
+    <h1 class="sr-only">Seguridad contra incendios espaciales</h1>
+    <div class="control-room">
+    <div class="control-left">
+      <section class="station-panel" aria-labelledby="station-title">
+        <div class="station-head"><div><span class="overline">LABORATORIO ORBITAL</span><h2 id="station-title">Estación Espacial<br>Internacional</h2></div><span class="station-chip">${icon("planet")} Modelo 3D</span></div>
+        <div class="station-viewport">
+          <div class="orbital-grid" aria-hidden="true"></div>
+          <model-viewer id="iss-viewer" src="assets/iss.glb" loading="eager" camera-controls disable-pan disable-tap alt="Modelo 3D de la Estación Espacial Internacional" camera-orbit="34deg 63deg auto" field-of-view="30deg" min-field-of-view="16deg" max-field-of-view="44deg" exposure="1.15" interaction-prompt="none" touch-action="pan-y"><div class="station-poster" slot="poster"></div></model-viewer>
+          <div class="station-controls" role="group" aria-label="Controles del modelo"><button class="icon-button" type="button" data-camera="left" aria-label="Girar a la izquierda" disabled>${icon("chevron-left")}</button><button class="icon-button" type="button" data-camera="right" aria-label="Girar a la derecha" disabled>${icon("chevron-right")}</button><button class="icon-button" type="button" data-camera="reset" aria-label="Restablecer vista" title="Restablecer vista" disabled>${icon("globe")}</button></div>
+        </div>
+        <div class="station-foot"><span id="station-hint" role="status">Cargando modelo 3D…</span>${external("https://science.nasa.gov/3d-resources/international-space-station-iss-a/", "NASA Ames")}</div>
+      </section>
+      <section class="card coverage" aria-labelledby="coverage-title">
+        <div class="coverage-heading"><h2 id="coverage-title">Cobertura de la evidencia</h2><span class="mono">NASA PSI</span></div>
+        <div class="stats">${stat("database", "orange", studies.length, "Tablas PSI", "CSV originales", "fuentes")}
+        ${stat("flask", "teal", stats.observations, "Observaciones", "EEI y Cygnus", "experimentos")}
+        ${stat("clock", "purple", incidents.length, "Incidentes", "Apollo y Mir", "incidentes")}
+        ${stat("bulb", "blue", evidence.length, "Hallazgos", "Cinco temas", null)}</div>
+      </section>
+    </div>
+    <div class="control-right">
       <section class="card flex-card" aria-labelledby="flex-title">
-        <div class="card-heading"><div><span class="overline">PSI-69 · FLEX</span><h2 id="flex-title">Cómo terminan los ensayos</h2></div><span class="metric-icon orange">${icon("chart")}</span></div>
-        <p class="section-description">Combustión de gotas en la Estación Espacial Internacional.</p>
+        <div class="card-heading"><div><h2 id="flex-title">Cómo terminan los ensayos</h2><p class="section-description">Combustión de gotas en microgravedad.</p></div><span class="station-chip">${icon("chart")} PSI-69 · FLEX</span></div>
         <div id="flex-interaction"></div>
         <div class="card-foot"><a class="text-link" href="#experimentos" data-study-link="PSI-69">Ver tabla FLEX ${icon("arrow-right")}</a><span class="mono muted">EEI · CIR</span></div>
       </section>
-      <section class="card insights-card" aria-labelledby="insights-title">
-        <div class="card-heading"><div><span class="overline">PRIORIZACIÓN POR MISIÓN</span><h2 id="insights-title">Hallazgos prioritarios</h2></div><span class="metric-icon purple">${icon("bulb")}</span></div>
+      <div class="control-bottom"><section class="card insights-card" aria-labelledby="insights-title">
+        <div class="card-heading"><h2 id="insights-title">Hallazgos prioritarios</h2></div>
         <div id="mission-results"></div>
       </section>
-    </div>
-    <section class="assistant-rail card">
-      <span class="assistant-mark" aria-hidden="true">${icon("spark")}</span>
-      <div><h2>Consulta la evidencia</h2><p>Pregunta qué ocurrió en Mir o compara los ensayos de FLEX por combustible.</p></div>
-      <button class="button button-dark" type="button" data-action="assistant">${icon("spark")} Consultar IA</button>
-    </section>`;
+      <section class="card mission-log" aria-labelledby="log-title">
+        <div class="card-heading"><h2 id="log-title">Registro histórico</h2></div>
+        ${incidents.map(item => `<button class="log-row" type="button" data-incident="${item.id}"><span class="metric-icon">${icon(item.icon)}</span><span><strong>${item.title}</strong><small>${item.event}</small></span>${icon("chevron-right", "log-arrow")}</button>`).join("")}
+        <div class="card-foot"><a href="#incidentes" class="text-link">Ver incidentes ${icon("arrow-right")}</a></div>
+      </section>
+      </div></div>
+    </div>`;
   drawFlex();
   drawRanking();
+  const viewer = document.querySelector("#iss-viewer");
+  const fallback = () => {
+    if (!viewer.isConnected) return;
+    viewer.parentElement.classList.add("poster-only");
+    document.querySelector("#station-hint").textContent = "Vista de la estación · modelo de NASA";
+  };
+  viewer.addEventListener("error", fallback);
+  viewer.addEventListener("load", () => {
+    for (const button of viewer.parentElement.querySelectorAll("[data-camera]")) button.disabled = false;
+    document.querySelector("#station-hint").textContent = "Arrastra para girar · Desplaza para acercar";
+  }, { once: true });
+  (viewerModule ??= import("./assets/model-viewer.min.js").then(({ ModelViewerElement }) => {
+    ModelViewerElement.dracoDecoderLocation = new URL("./assets/draco/", import.meta.url).href;
+  })).catch(fallback);
 }
 
 function drawFlex() {
@@ -90,14 +111,13 @@ function drawFlex() {
   const rows = Object.entries(counts).map(([key, count]) => {
     const percent = 100 * count / total;
     return `<button class="chart-row" type="button" data-outcome="${key}" aria-label="Abrir ${count} registros de ${outcomeLabels[key].toLowerCase()}">
-      <span class="chart-label"><span class="dot ${outcomeColors[key]}"></span>${outcomeLabels[key]}</span>
-      <span class="bar-track"><span class="chart-bar ${outcomeColors[key]}" style="width:${percent}%"></span></span>
-      <span class="chart-value">${number.format(percent)}<small> %</small></span>
+      <span class="bar-track"><span class="chart-bar ${outcomeColors[key]}" style="--bar-height:${percent}%"><span class="chart-value">${number.format(percent)}<small> %</small></span></span></span>
+      <span class="chart-label">${outcomeLabels[key]}</span>
     </button>`;
   }).join("");
   document.querySelector("#flex-interaction").innerHTML = `
     <div class="chart-controls"><div class="segmented" role="group" aria-label="Combustible">${filters}</div><span class="sample-count mono" role="status">n = ${total}</span></div>
-    <div class="bar-chart" aria-label="Porcentaje de registros por tipo de fin del ensayo">${rows}<div class="chart-axis" aria-hidden="true"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 %</span></div></div>`;
+    <div class="vertical-chart"><div class="vertical-axis" aria-hidden="true"><span>100 %</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div class="bar-chart" aria-label="Porcentaje de registros por tipo de fin del ensayo">${rows}</div></div>`;
 }
 
 function drawRanking() {
@@ -309,6 +329,7 @@ function route({ move = true } = {}) {
   if (!Object.hasOwn(pages, key) || !studies.length) return;
   const changed = state.page !== key;
   state.page = key;
+  document.body.classList.toggle("overview-page", key === "resumen");
   document.querySelector("#page-label").textContent = pages[key];
   document.querySelectorAll("[data-page]").forEach(link => {
     if (link.dataset.page === key) link.setAttribute("aria-current", "page");
@@ -365,6 +386,16 @@ document.addEventListener("click", event => {
     focusCurrent(`[data-mission="${data.mission}"]`);
   }
   if (data.evidence) openEvidence(data.evidence);
+  if (data.camera) {
+    const viewer = document.querySelector("#iss-viewer");
+    if (data.camera === "reset") {
+      viewer.cameraOrbit = "34deg 63deg auto";
+      viewer.fieldOfView = "30deg";
+    } else {
+      const { theta, phi, radius } = viewer.getCameraOrbit();
+      viewer.cameraOrbit = `${theta + (data.camera === "left" ? -.45 : .45)}rad ${phi}rad ${radius}m`;
+    }
+  }
   if (data.incident) openIncident(data.incident);
   if (data.record) openRecord(data.record);
   if (data.tableNav) {

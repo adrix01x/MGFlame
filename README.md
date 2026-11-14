@@ -45,4 +45,4 @@ El script compara tamaños con los metadatos publicados de PSI y registra un SHA
 - **Priorización.** Ordena hallazgos con dos veces la pertinencia editorial para la misión (0–4) más el grado de evidencia directa (1–3). La puntuación guía la exploración de fuentes. Las aplicaciones a la Luna y a Marte son preguntas de validación para gravedad parcial.
 - **IA local.** Usa un clasificador multinomial de Naive Bayes entrenado con ejemplos en español para clasificar preguntas. Normaliza términos y sinónimos, da peso a coincidencias poco frecuentes y recupera hasta dos hallazgos de un corpus de síntesis documentadas. Usa cálculos directos en consultas de conteo o comparación. Las preguntas quedan en el navegador y la síntesis se limita al corpus incluido.
 
-Proyecto independiente. La imagen de la llama se acredita a NASA en el panel y en su [ficha original](https://science.nasa.gov/image-article/apod-2021-august-10-fire-in-space/).
+Proyecto independiente. El visor utiliza el [modelo de la Estación Espacial Internacional de NASA Ames](https://science.nasa.gov/3d-resources/international-space-station-iss-a/).

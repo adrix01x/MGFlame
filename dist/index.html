@@ -11,6 +11,7 @@
   <link rel="icon" href="assets/ignis.svg" type="image/svg+xml">
   <link rel="preload" href="assets/inter.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/dashboard.css">
   <script type="module" src="app.mjs"></script>
 </head>
 <body>
@@ -24,13 +25,13 @@
       <div class="sidebar-body">
         <span class="nav-label">EXPLORAR</span>
         <nav class="nav">
-          <a href="#resumen" data-page="resumen" aria-current="page"><i data-icon="grid"></i>Resumen</a>
-          <a href="#experimentos" data-page="experimentos"><i data-icon="flask"></i>Experimentos</a>
-          <a href="#incidentes" data-page="incidentes"><i data-icon="clock"></i>Incidentes</a>
-          <a href="#fuentes" data-page="fuentes"><i data-icon="book"></i>Fuentes y datos</a>
+          <a href="#resumen" data-page="resumen" aria-current="page" title="Resumen"><i data-icon="grid"></i>Resumen</a>
+          <a href="#experimentos" data-page="experimentos" title="Experimentos"><i data-icon="flask"></i>Experimentos</a>
+          <a href="#incidentes" data-page="incidentes" title="Incidentes"><i data-icon="clock"></i>Incidentes</a>
+          <a href="#fuentes" data-page="fuentes" title="Fuentes y datos"><i data-icon="book"></i>Fuentes y datos</a>
         </nav>
         <div class="sidebar-rule"></div>
-        <button class="nav-action" type="button" data-action="assistant"><i data-icon="spark"></i>Asistente de IA<i class="nav-arrow" data-icon="external"></i></button>
+        <button class="nav-action" type="button" data-action="assistant" title="Asistente de IA"><i data-icon="spark"></i>Asistente de IA<i class="nav-arrow" data-icon="external"></i></button>
       </div>
       <div class="sidebar-bottom">
         <div class="provenance"><span class="status-dot"></span><div><strong>Datos abiertos NASA</strong><small>Physical Sciences Informatics</small></div></div>

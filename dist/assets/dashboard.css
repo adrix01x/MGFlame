@@ -1,0 +1,116 @@
+.overview-page {
+  --sidebar: 78px;
+  --line: #dcded9;
+  --surface: #eef0eb;
+  --paper: #e1e3de;
+  background: var(--paper);
+}
+.overview-page .sidebar { background: #e1e3de; }
+.overview-page .brand { justify-content: center; padding: 0; border-bottom: 0; min-height: 75px; }
+.overview-page .brand-mark { background: #292e2b; }
+.overview-page .brand-text, .overview-page .sidebar-bottom, .overview-page .nav-label { display: none; }
+.overview-page .sidebar-body { padding: 14px 13px; }
+.overview-page .nav { gap: 8px; }
+.overview-page .nav a, .overview-page .nav-action { justify-content: center; font-size: 0; gap: 0; }
+.overview-page .nav .icon, .overview-page .nav-action .icon:first-child { width: 21px; height: 21px; }
+.overview-page .nav-action .nav-arrow { display: none; }
+.overview-page .nav a[aria-current="page"] { background: #f8f9f5; border-color: #f8f9f5; color: #272c29; box-shadow: 0 2px 5px #1719110b; }
+.overview-page .topbar { background: transparent; border-bottom: 0; min-height: 75px; padding-inline: clamp(18px, 2.4vw, 37px); }
+.overview-page .breadcrumb span, .overview-page .breadcrumb i { display: none; }
+.overview-page .breadcrumb strong { font-size: clamp(23px, 2.75vw, 39px); letter-spacing: -.065em; }
+.overview-page .topbar .button-outline { background: #eff0eb; }
+.overview-page .content { padding: 8px clamp(18px, 2.4vw, 37px) 0; }
+.control-room { display:grid; grid-template-columns: minmax(0, 43fr) minmax(0, 57fr); gap: 13px; }
+.control-left, .control-right { min-width: 0; display: grid; gap: 13px; align-content: start; }
+.control-right { grid-template-rows: auto 1fr; }
+.control-room .card { border: 1px solid #fafbf68c; border-radius: 13px; box-shadow: 0 1px 2px #2a332909; }
+.station-panel { position:relative; isolation:isolate; min-height: 430px; display:flex; flex-direction:column; }
+.station-head, .station-foot { display:flex; justify-content:space-between; align-items:start; gap: 8px; padding: 14px 6px; }
+.station-head h2 { margin-top: 5px; font-size: clamp(24px, 2.9vw, 42px); line-height:.99; }
+.station-head .overline { color:#535d52; }
+.station-chip { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; padding:7px 8px; border-radius:6px; background:#f6f7f2; color:#414940; font:500 10px/1.2 var(--mono); white-space:nowrap; }
+.station-chip .icon { width:14px; height:14px; }
+.station-viewport { position:relative; min-height:310px; flex: 1; display:grid; place-items:center; }
+.orbital-grid { position:absolute; inset: 2% 1%; background: radial-gradient(ellipse at center, #f2f3ed 0%, #e1e3de00 70%); pointer-events:none; }
+.orbital-grid::after { content:""; position:absolute; inset: 16% 14%; border-radius:50%; border:1px solid #ccd0c8; box-shadow:0 0 0 17px #e1e3de, 0 0 0 18px #d1d5cd; transform:rotate(-15deg) scaleY(.67); }
+model-viewer { display:block; width:100%; height:100%; min-height:310px; position:relative; --progress-bar-height: 2px; --progress-bar-color:#737ccd; background:transparent; }
+.station-poster { width:100%; height:100%; background: url("iss-poster.png") center / contain no-repeat; }
+model-viewer:not(:defined) .station-poster { position:absolute; inset:0; }
+.poster-only .station-controls { display:none; }
+.station-controls { position:absolute; right: 3px; top:50%; transform:translateY(-50%); display:grid; gap:3px; }
+.station-controls .icon-button { background:#f5f6f0; border-color:#ffffff85; width:29px; height:29px; }
+.station-controls .icon-button:hover:not(:disabled) { background:white; }
+.station-foot { align-items:center; padding-block: 5px; color:#4f584e; font-size:11px; }
+.station-foot .text-link { color:#404e86; flex:0 0 auto; }
+.coverage { padding:14px 13px 11px; }
+.coverage-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.coverage-heading h2 { font-size:16px; }
+.coverage-heading .mono { color:#596256; font-size:9px; }
+.control-room .stats { margin:12px 0 0; gap:5px; }
+.control-room .stat-card { min-height:94px; border:0; box-shadow:none; background:#f7f8f3; padding:8px 6px 7px; }
+.control-room .stat-card:hover { background:#fff; }
+.control-room .stat-card strong { font-size:24px; }
+.control-room .stat-top { margin-bottom:4px; }
+.control-room .stat-top .metric-icon { width:22px; height:22px; border-radius:5px; }
+.control-room .stat-top .metric-icon .icon { width:13px; height:13px; }
+.control-room .stat-label { font-size:10px; }
+.control-room .stat-card small { font-size:8px; }
+.control-room .flex-card { min-height:325px; }
+.control-room .card-heading h2 { margin-top:0; line-height:1.12; }
+.control-room .flex-card .card-heading h2 { font-size:clamp(21px,2.5vw,35px); }
+.control-room .segmented { background:#e3e6de; border-color:#dfe2d9; }
+.control-room .card-foot { border-color:#daddd4; min-height:42px; }
+.control-room .text-link { color:#414c83; }
+.vertical-chart { display:grid; grid-template-columns:36px minmax(0,1fr); gap:6px; height:185px; margin:0 2px 9px; }
+.vertical-axis { display:flex; flex-direction:column; justify-content:space-between; text-align:right; color:#586154; font:400 9px/1 var(--mono); padding:0 1px 27px 0; }
+.vertical-chart .bar-chart { position:relative; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(5px,1vw,13px); }
+.vertical-chart .bar-chart::before { content:""; position:absolute; inset:0 0 27px; background:repeating-linear-gradient(to top, #d8dcd2 0 1px, transparent 1px 25%); pointer-events:none; }
+.vertical-chart .chart-row { position:relative; display:grid; grid-template-columns:1fr; grid-template-rows:minmax(0,1fr) 27px; gap:0; min-width:0; }
+.vertical-chart .chart-row:hover { background:#ffffff48; }
+.vertical-chart .bar-track { height:100%; min-height:0; overflow:visible; align-items:end; background:transparent; }
+.vertical-chart .chart-bar { position:relative; display:block; width:100%; height:var(--bar-height); min-height:0; border-radius:4px 4px 0 0; transition:height .23s ease; }
+.vertical-chart .orange { background:linear-gradient(0deg,#ead1ac34,#eab9776b); border-top:2px solid #aa641d; }
+.vertical-chart .teal { background:linear-gradient(0deg,#c4ccec29,#a2abed85); border-top:2px solid #616ccb; }
+.vertical-chart .purple { background:linear-gradient(0deg,#efeef138,#daddd3); border-top:2px solid #838c7d; }
+.vertical-chart .chart-value { position:absolute; bottom:100%; left:50%; transform:translate(-50%,-4px); color:#2b3029; white-space:nowrap; }
+.vertical-chart .chart-label { justify-content:center; font-size:10px; align-self:center; color:#515a4c; }
+.control-bottom { display:grid; grid-template-columns:minmax(0,1.32fr) minmax(0,1fr); gap:12px; }
+.control-bottom .card { padding:15px 12px 0; }
+.control-bottom .card-heading h2 { font-size:clamp(14px,1.38vw,20px); }
+.control-bottom .insight-list { max-height:143px; }
+.control-bottom .insight-row { min-height:47px; border-color:#dee1d9; gap:5px; }
+.control-bottom .insight-info strong { font-size:10.5px; }
+.control-bottom .rank-number { background:#e0e3f6; color:#3e4c99; }
+.control-bottom .mission-scope { font-size:9px; }
+.control-bottom .segmented button { padding-inline:5px; }
+.mission-log { display:flex; flex-direction:column; }
+.mission-log .card-heading { margin-bottom:11px; }
+.log-row { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:7px; text-align:left; align-items:center; width:100%; border:0; border-top:1px solid #dde0d7; padding:7px 0; min-height:50px; }
+.log-row:hover { background:#f8f9f4; }
+.log-row .metric-icon { width:25px; height:25px; border-radius:6px; background:#343b35; color:#eef0e9; }
+.log-row .metric-icon .icon { width:14px; height:14px; }
+.log-row strong, .log-row small { display:block; font-size:11px; line-height:1.2; }
+.log-row small { color:#595f56; font-size:9px; margin-top:3px; }
+.log-arrow { width:12px; color:#5d665a; }
+
+@media (min-width:651px) and (max-width:1050px) {
+  .control-room { grid-template-columns:minmax(0, 40fr) minmax(0, 60fr); }
+  .control-bottom { grid-template-columns:1fr; }
+  .control-room .stats { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:650px) {
+  .overview-page .topbar { min-height:55px; padding-inline:12px; }
+  .overview-page .breadcrumb strong { font-size:24px; }
+  .overview-page .content { padding:0 11px; }
+  .overview-page .sidebar { width:200px; }
+  .overview-page .nav a, .overview-page .nav-action { font-size:13px; justify-content:start; gap:9px; }
+  .control-room { grid-template-columns:1fr; }
+  .station-panel { min-height:330px; }
+  .station-viewport, model-viewer { min-height:235px; }
+  .control-bottom { grid-template-columns:1fr; }
+  .control-room .stats { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .control-room .flex-card { min-height:300px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vertical-chart .chart-bar { transition:none; }
+}
