@@ -41,6 +41,10 @@ El script compara tamaños con los metadatos publicados de PSI y registra un SHA
 
 ## Análisis y priorización
 
+El resumen prioriza evidencia para estaciones orbitales, naves tripuladas, bases lunares y marcianas, y rovers presurizados. **Experimentos** permite exportar la selección con todas las columnas del CSV, DOI, versión, tipo de registro y fila de origen. **Controles de seguridad** vincula las investigaciones con materiales, detección, supresión y respuesta, y documenta ejemplos de transferencia a Tierra.
+
+El alcance es la seguridad de los entornos habitables. La propulsión y los propelentes quedan fuera del catálogo. Las escenas 3D ilustran los ensayos y los archivos PSI proporcionan datos para investigaciones de modelado y validación.
+
 - **Gráfica FLEX.** Calcula la distribución de las etiquetas de fin de ensayo para el combustible seleccionado. La extinción registrada representa una categoría del archivo y requiere otras mediciones para identificar una llama fría.
 - **Priorización.** Ordena hallazgos con dos veces la pertinencia editorial para la misión (0–4) más el grado de evidencia directa (1–3). La puntuación guía la exploración de fuentes. Las aplicaciones a la Luna y a Marte son preguntas de validación para gravedad parcial.
 - **IA local.** Usa un clasificador multinomial de Naive Bayes entrenado con ejemplos en español para clasificar preguntas. Normaliza términos y sinónimos, da peso a coincidencias poco frecuentes y recupera hasta dos hallazgos de un corpus de síntesis documentadas. Usa cálculos directos en consultas de conteo o comparación. Las preguntas quedan en el navegador y la síntesis se limita al corpus incluido.

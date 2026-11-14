@@ -2,6 +2,7 @@ const nasaGlenn = "https://www.nasa.gov/glenn/glenn-expertise-space-exploration/
 const ntrs = "https://ntrs.nasa.gov/citations/";
 
 export const sources = [
+  { id: "mist", title: "Fine-water-mist fire extinguisher", publisher: "NASA Spinoff", type: "Transferencia", url: "https://spinoff.nasa.gov/Spinoff2020/ip_5.html", note: "Desarrollo de un extintor portátil de niebla fina para la EEI y de componentes con aplicación terrestre." },
   { id: "psi", title: "Physical Sciences Informatics", publisher: "NASA PSI", type: "Repositorio", url: "https://psi.nasa.gov/physci/repo/search?q=&data_source=psi&data_type=investigation", note: "Catálogo de investigaciones de ciencias físicas. Cada tabla integrada conserva su DOI y versión." },
   { id: "glenn", title: "Combustion Science", publisher: "NASA Glenn", type: "Programa científico", url: nasaGlenn, note: "Contexto de las investigaciones y de las instalaciones de la EEI, el Combustion Integrated Rack (CIR) y la guantera científica (MSG)." },
   { id: "video", title: "The Power of Studying Combustion on the ISS", publisher: "NASA ScienceCasts · 2018", type: "Video", url: "https://www.youtube.com/watch?v=W1oXykoz9zg", note: "A 01:19 presenta el CIR y distingue FLEX (gotas), ACME (gases) y SoFIE (sólidos). A 02:07 explica cómo la microgravedad reduce la convección por flotabilidad.", archive: "https://images.nasa.gov/details/264_StudyingCombustionOnTheISS", download: "data/original/sciencecasts.srt", downloadLabel: "Subtítulos (SRT)" },
@@ -30,9 +31,11 @@ export const topics = {
 };
 
 export const missions = {
-  orbit: { label: "Órbita", scope: "EEI y vehículos en vuelo libre", note: "Prioriza resultados obtenidos en microgravedad orbital y casos de operaciones en vuelo." },
+  orbit: { label: "Estación orbital", scope: "Microgravedad · módulos conectados", note: "Prioriza investigación en la EEI y casos relevantes para detección, ventilación y evacuación en órbita." },
+  spacecraft: { label: "Nave tripulada", scope: "Cabina de tránsito · volumen confinado", note: "Prioriza evidencia a escala de vehículo sobre gases, detección y recuperación de soporte vital." },
   moon: { label: "Luna", scope: "Hábitat lunar · gravedad parcial", note: "Prioriza trabajos que permitan definir qué debe ensayarse en gravedad lunar y con la atmósfera del hábitat." },
   mars: { label: "Marte", scope: "Hábitat marciano · gravedad parcial", note: "Prioriza preguntas sobre habitabilidad, detección y respuesta autónoma en misiones de larga duración." },
+  rover: { label: "Rover presurizado", scope: "Cabina móvil · gravedad parcial", note: "Prioriza el efecto del volumen confinado, la evacuación y la validación en gravedad parcial. Las aplicaciones al rover son inferencias de diseño." },
 };
 
 export const incidents = [
@@ -51,12 +54,19 @@ export const incidents = [
 ];
 
 export const transfers = [
+  { id: "mist", label: "Extintor de niebla fina", icon: "flame", statistic: "Niebla de agua", context: "El desarrollo para la EEI impulsó tecnología de supresión aplicable a espacios confinados en Tierra." },
   { id: "tanks", label: "Aire respirable", icon: "cross", statistic: "20 lb", context: "Peso del equipo con 30 min de suministro de aire según el artículo de 1976." },
   { id: "detector", label: "Detección incipiente", icon: "radar", statistic: "Muestreo", context: "El sensor discrimina partículas de combustión y polvo para reducir falsas alarmas." },
   { id: "fires", label: "Indumentaria FIRES", icon: "shield", statistic: "14", context: "Departamentos de bomberos participaron en la evaluación de campo del equipo." },
 ];
 
 export const evidence = [
+  { id: "transfer-mist", title: "Niebla fina de agua para extinción", topic: "suppression", kind: "Transferencia", directness: 1,
+    studies: [], refs: ["mist"], weights: { orbit: 2, spacecraft: 2, moon: 1, mars: 1, rover: 1 },
+    tags: "agua niebla fina extintor water mist supresión equipo ISS EEI Tierra",
+    finding: "NASA Spinoff documenta el desarrollo de un extintor portátil de niebla fina de agua para la EEI y tecnología derivada con aplicaciones terrestres.",
+    implication: "Evaluar compatibilidad con personas y equipos, y la eficacia en el recinto de interés.",
+    limit: "La fuente describe desarrollo y transferencia tecnológica. El catálogo PSI de IGNIS no incluye una serie de desempeño del extintor." },
   { id: "saffire-gases", title: "Los gases pueden adelantarse a la alarma de humo", topic: "detection", kind: "Informe preliminar", directness: 2,
     studies: [], refs: ["saffire-vi"], weights: { orbit: 3, moon: 2, mars: 3 },
     tags: "Saffire VI CO CO2 monóxido dióxido gases tóxicos 981 segundos alarma PMMA detectores sensor temperatura",

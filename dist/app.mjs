@@ -1,9 +1,10 @@
 import { icon, initIcons } from "./icons.mjs";
 import { mountSimulation } from "./simulation.mjs";
 import { sources, evidence, incidents, transfers, topics, missions } from "./data/evidence.mjs";
+import { modeling, modelingCsv, controlResearch } from "./data/objectives.mjs";
 import { answerQuestion, catalogStats, countFlex, missionScore, normalize, outcomeLabels, rankEvidence } from "./analysis.mjs";
 
-const pages = { resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
+const pages = { resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
 const fuelLabels = { all: "Todos", Methanol: "Metanol", Heptane: "Heptano" };
 const outcomeColors = { Extinction: "orange", Disruption: "teal", Completion: "purple" };
 const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
@@ -39,9 +40,8 @@ function stat(iconName, color, value, label, caption, page) {
 }
 
 function missionButtons() {
-  const symbols = { orbit: "globe", moon: "moon", mars: "planet" };
-  return `<div class="segmented missions" role="group" aria-label="Escenario de misión">${Object.entries(missions).map(([key, item]) =>
-    `<button type="button" data-mission="${key}" aria-pressed="${state.mission === key}">${icon(symbols[key])}${item.label}</button>`).join("")}</div>`;
+  return `<label class="mission-picker"><span>Entorno habitable</span><select id="mission-select">${Object.entries(missions).map(([key, item]) =>
+    `<option value="${key}" ${state.mission === key ? "selected" : ""}>${item.label}</option>`).join("")}</select></label>`;
 }
 
 let viewerModule;
@@ -50,6 +50,10 @@ function drawOverview() {
   const stats = catalogStats(studies);
   main.innerHTML = `
     <h1 class="sr-only">Seguridad contra incendios espaciales</h1>
+    <section class="challenge-intro" aria-labelledby="challenge-title">
+      <div><h2 id="challenge-title">Seguridad contra incendios en hábitats tripulados</h2><p>Encuentra investigaciones de NASA, compara sus condiciones y descubre qué falta validar para tu misión.</p></div>
+      <div class="challenge-actions"><a class="button button-outline" href="#experimentos">${icon("database")} Datos para modelado</a><a class="button button-outline" href="#controles">${icon("shield")} Controles de seguridad</a></div>
+    </section>
     <div class="control-room">
     <div class="control-left">
       <section class="station-panel" aria-labelledby="station-title">
@@ -127,12 +131,12 @@ function drawRanking() {
   const rows = ordered.map((item, index) => `
     <button class="insight-row" type="button" data-evidence="${item.id}">
       <span class="rank-number">${String(index + 1).padStart(2, "0")}</span>
-      <span class="insight-info"><strong>${escape(item.title)}</strong><small>${topics[item.topic].label} <span>·</span> ${item.studies[0] ?? item.kind}</small></span>
+      <span class="insight-info"><strong>${escape(item.title)}</strong><small>${topics[item.topic].label} <span>·</span> ${item.studies[0] ?? item.kind} <span>·</span> ${missionScore(item, state.mission)}/11</small></span>
       ${icon("chevron-right", "insight-arrow")}
     </button>`).join("");
   document.querySelector("#mission-results").innerHTML = `
     <div class="mission-controls">${missionButtons()}<button class="icon-button help-button" type="button" data-action="method" aria-label="Método de priorización" title="Método de priorización">${icon("info")}</button></div>
-    <p class="mission-scope" role="status">${group.scope}</p>
+    <p class="mission-scope" role="status">${group.scope}. ${group.note}</p>
     <div class="insight-list">${rows}</div>
     <div class="card-foot"><label class="inline-select">${icon("filter")}<span class="sr-only">Tema del hallazgo</span><select id="topic-filter"><option value="all">Todos los temas</option>${Object.entries(topics).map(([key, value]) => `<option value="${key}" ${key === state.topic ? "selected" : ""}>${value.label}</option>`).join("")}</select>${icon("chevron-down")}</label><span class="mono muted" aria-live="polite">${ordered.length} hallazgos</span></div>`;
 }
@@ -146,7 +150,7 @@ function studySelection() {
 }
 
 function drawExperiments() {
-  main.innerHTML = pageHead("ARCHIVO EXPERIMENTAL", "Experimentos", "Examina los registros de combustión, aerosoles y propagación publicados por NASA PSI.", `<a class="button button-outline" href="#fuentes">${icon("database")} Ver los CSV</a>`) + `
+  main.innerHTML = pageHead("DATOS PARA MODELADO", "Experimentos", "Consulta las variables medidas, filtra corridas y exporta la selección con sus unidades y procedencia.", `<a class="button button-outline" href="#fuentes">${icon("database")} Ver archivos originales</a>`) + `
     <section class="card dataset-controls" aria-label="Filtros de experimentos">
       <label><span>Investigación</span><span class="input-wrap">${icon("flask")}<select id="study-select">${studySelection()}</select>${icon("chevron-down", "input-tail")}</span></label>
       <label><span>Buscar en el registro</span><span class="input-wrap">${icon("search")}<input id="table-query" type="search" value="${escape(state.query)}" placeholder="Ensayo, material, condición…"></span></label>
@@ -188,7 +192,8 @@ function drawTable() {
     <label class="inline-select"><span>Fin del ensayo</span><select id="table-outcome"><option value="">Todos</option>${Object.entries(outcomeLabels).map(([key, value]) => `<option value="${key}" ${key === state.outcome ? "selected" : ""}>${value}</option>`).join("")}</select>${icon("chevron-down")}</label>` : "";
   document.querySelector("#dataset-panel").innerHTML = `
     <div class="dataset-heading"><div><span class="overline">${study.id} · ${study.group}</span><h2 id="dataset-title">${study.name}</h2><p>${study.mission} <span>·</span> ${external("https://doi.org/" + study.doi, "DOI " + study.doi)}</p></div>${download(study.file, "Descargar CSV")}</div>
-    <div class="dataset-note">${icon("info")}<p>${study.note}</p></div>
+    <div class="dataset-note">${icon("info")}<p><strong>${modeling[study.id][0]}.</strong> ${modeling[study.id][1]} ${study.note}</p></div>
+    <div class="modeling-actions"><button class="button button-dark button-small" type="button" data-action="export-selection" ${rows.length ? "" : "disabled"}>${icon("download")} Exportar selección (${rows.length})</button><a class="text-link" href="#simulacion?${new URLSearchParams({ study: study.id })}">Explorar en 3D ${icon("play")}</a></div>
     <div class="table-toolbar"><span class="record-count" role="status">${rows.length} de ${study.rows.length} filas</span><div>${filters}
       <label class="inline-select">${icon("sort")}<span class="sr-only">Orden</span><select id="table-sort"><option value="original" ${state.sort === "original" ? "selected" : ""}>Orden original</option><option value="reverse" ${state.sort === "reverse" ? "selected" : ""}>Últimas filas primero</option><option value="sample" ${state.sort === "sample" ? "selected" : ""}>Muestra, A–Z</option></select>${icon("chevron-down")}</label></div></div>
     ${rows.length ? `<div class="table-scroll" tabindex="0" aria-label="Tabla de ${study.name}, desplazable"><table><thead><tr>${study.columns.map(([, label]) => `<th scope="col">${label}</th>`).join("")}<th scope="col"><span class="sr-only">Detalle</span></th></tr></thead><tbody>${cells}</tbody></table></div>` : '<div class="empty"><h3>Sin resultados</h3><p>Cambia los filtros o prueba con otro término.</p><button type="button" data-action="reset-table" class="button button-outline">Borrar filtros</button></div>'}
@@ -206,8 +211,18 @@ function drawIncidents() {
         <div class="incident-lesson"><span class="overline">APLICACIÓN A FUTURAS MISIONES</span><p>${escape(item.implication)}</p></div>
         <div class="case-bottom"><strong>${item.result}</strong><button type="button" class="text-link" data-incident="${item.id}">Ver caso ${icon("arrow-right")}</button></div>
       </article>`).join("")}
-    </div>
-    <div class="section-heading"><div><span class="overline">NASA SPINOFF</span><h2>Tecnología transferida a la Tierra</h2></div><a class="text-link" href="#fuentes">Ver fuentes ${icon("arrow-right")}</a></div>
+    </div><p class="modeling-actions"><a class="text-link" href="#controles">Ver investigación para controles y equipos ${icon("arrow-right")}</a></p>`;
+}
+
+function drawControls() {
+  main.innerHTML = pageHead("INVESTIGACIÓN APLICADA", "Controles de seguridad", "Explora qué investigaciones pueden informar el diseño de controles en cabinas presurizadas y qué preguntas siguen abiertas.") + `
+    <div class="control-research">${controlResearch.map(item => `<article class="card research-card">
+      ${topicTag(item.topic)}<h2>${item.title}</h2><p>${item.question}</p>
+      <p><strong>Qué validar.</strong> ${item.validation}</p>
+      <div class="detail-actions"><button type="button" class="text-link" data-evidence="${item.evidence}">Ver evidencia ${icon("arrow-right")}</button>
+      ${item.studies.map(id => `<a class="text-link" href="#experimentos" data-study-link="${id}">${id} ${icon("arrow-right")}</a>`).join("")}</div>
+    </article>`).join("")}</div>
+    <div class="section-heading"><div><span class="overline">NASA SPINOFF</span><h2>Aplicaciones en Tierra</h2></div><a class="text-link" href="#fuentes">Ver fuentes ${icon("arrow-right")}</a></div>
     <section class="transfer-grid" aria-label="Transferencias tecnológicas">${transfers.map(item => `<article class="card transfer"><span class="metric-icon teal">${icon(item.icon)}</span><h3>${item.label}</h3><strong>${item.statistic}</strong><p>${item.context}</p>${external(sources.find(source => source.id === item.id).url, "NASA Spinoff")}</article>`).join("")}</section>`;
 }
 
@@ -217,7 +232,7 @@ function sourceCard(item) {
 
 function drawSources() {
   main.innerHTML = pageHead("TRAZABILIDAD", "Fuentes y datos", "Descarga las tablas originales y consulta qué aporta cada fuente al atlas.", `<button type="button" class="button button-outline" data-action="method">${icon("info")} Metodología</button>`) + `
-    <section class="card sources-card"><div class="dataset-heading"><div><span class="overline">PHYSICAL SCIENCES INFORMATICS</span><h2>Tablas experimentales</h2><p>Datos abiertos con licencia CC0-1.0</p></div><div class="source-actions dataset-actions">${external(sources[0].url, "Portal NASA PSI")}${download("data/nasa-psi-csv.zip", "Descargar los CSV")}</div></div>
+    <section class="card sources-card"><div class="dataset-heading"><div><span class="overline">PHYSICAL SCIENCES INFORMATICS</span><h2>Tablas experimentales</h2><p>Datos abiertos con licencia CC0-1.0</p></div><div class="source-actions dataset-actions">${external(sources.find(source => source.id === "psi").url, "Portal NASA PSI")}${download("data/nasa-psi-csv.zip", "Descargar los CSV")}</div></div>
       <div class="source-datasets">${studies.map(study => `<article class="dataset-source"><div><span class="overline">${study.id} · V${study.version}</span><h3>${study.name}</h3><p>${study.sourceRows} filas originales · ${study.group}</p></div><div class="source-actions">${external("https://doi.org/" + study.doi, study.doi)}${download(study.file, "CSV")}</div></article>`).join("")}</div></section>
     <section class="card sources-card"><div class="dataset-heading"><div><span class="overline">BIBLIOGRAFÍA</span><h2>Documentación de NASA</h2></div><label class="inline-select">${icon("filter")}<span class="sr-only">Tipo de fuente</span><select id="source-filter"><option value="all">Todas las fuentes</option>${[...new Set(sources.map(item => item.type))].map(type => `<option value="${escape(type)}" ${type === state.sourceFilter ? "selected" : ""}>${escape(type)}</option>`).join("")}</select>${icon("chevron-down")}</label></div><div class="source-list" id="sources-list"></div></section>`;
   drawSourceList();
@@ -251,6 +266,7 @@ function openEvidence(id) {
   const selected = missions[state.mission];
   openDetail(item.kind, item.title, `
     <div class="detail-meta">${topicTag(item.topic)}<span>${selected.label} · ${missionScore(item, state.mission)}/11 puntos de prioridad</span></div>
+    <section><h3>Contexto de aplicación</h3><p>${selected.note}</p></section>
     <section><h3>Qué observaron</h3><p>${escape(item.finding)}</p></section>
     <section><h3>Implicación para el diseño</h3><p>${escape(item.implication)}</p></section>
     <section class="limit-box"><h3>Alcance de la evidencia</h3><p>${escape(item.limit)}</p></section>
@@ -283,7 +299,8 @@ function openMethod() {
     <section><h3>Datos originales</h3><p>El atlas descarga las tablas experimentales de NASA PSI. Muestra las observaciones y las filas de condiciones o referencias, con DOI, versión y posición en el CSV. Mantiene las notas, la limpieza y las visualizaciones previas en los archivos originales.</p></section>
     <section><h3>Clasificación y prioridad</h3><p>Los hallazgos se clasifican por tema. La prioridad es dos veces la pertinencia editorial para la misión (0–4) más el grado de evidencia directa (1–3). El máximo teórico es 11. La puntuación ordena la lectura y no estima la probabilidad ni la gravedad de un incendio.</p></section>
     <section><h3>Asistente de IA</h3><p>Un clasificador bayesiano local identifica el tema de la pregunta. El asistente pondera términos, sinónimos e identificadores, recupera hasta dos hallazgos citados y calcula recuentos desde las tablas cuando corresponde. La síntesis es extractiva y las implicaciones están documentadas en el corpus.</p></section>
-    <section class="limit-box"><h3>Transferencia entre entornos</h3><p>La evidencia experimental integrada proviene de la EEI y de vuelos Cygnus. Los escenarios Luna y Marte ayudan a plantear qué validar en esos hábitats.</p></section>`);
+    <section><h3>Exportación para modelado</h3><p>El CSV filtrado conserva los campos y unidades originales, el DOI, la versión PSI y la fila de origen. El visor 3D reproduce esquemas didácticos. Un modelo predictivo requiere validación experimental.</p></section>
+    <section class="limit-box"><h3>Alcance de la evidencia</h3><p>El atlas cubre incendios en entornos habitables. La propulsión de cohetes y sus propelentes quedan fuera de alcance. Los escenarios de superficie y rover permiten identificar qué validar en gravedad parcial y con la atmósfera y geometría reales.</p></section>`);
 }
 
 function openAssistant() {
@@ -291,9 +308,9 @@ function openAssistant() {
   document.querySelector("#assistant-context").innerHTML = `<span>ESCENARIO</span><strong>${missions[state.mission].label}</strong>`;
   if (!messageLog.childElementCount) {
     const suggestions = [
-      "¿Qué pasó con el humo y los gases en Saffire-VI?",
-      "¿Cuántas extinciones registró FLEX?",
-      "¿Qué ocurrió durante el incendio en Mir?",
+      "¿Qué investigaciones debo priorizar para este entorno?",
+      "¿Qué datos puedo usar para modelar la propagación en BASS-II?",
+      "¿Cómo se aplica en Tierra la niebla fina de agua?",
     ];
     messageLog.innerHTML = `<div class="message bot-message"><p>Pregunta por un estudio, una condición de ensayo o un incidente. Puedes abrir las referencias desde cada respuesta.</p><div class="suggestions">${suggestions.map(value => `<button type="button" data-suggest="${escape(value)}">${escape(value)} ${icon("arrow-up-right")}</button>`).join("")}</div></div>`;
   }
@@ -328,7 +345,7 @@ function closeMenu() {
 let disposeSimulation;
 
 function route({ move = true } = {}) {
-  const key = location.hash.slice(1) || "resumen";
+  const [key = "resumen", query] = (location.hash.slice(1) || "resumen").split("?");
   if (!Object.hasOwn(pages, key) || !studies.length) return;
   const changed = state.page !== key;
   state.page = key;
@@ -340,7 +357,7 @@ function route({ move = true } = {}) {
   closeMenu();
   disposeSimulation?.();
   disposeSimulation = undefined;
-  ({ resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies); }, incidentes: drawIncidents, fuentes: drawSources })[key]();
+  ({ resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies, new URLSearchParams(query).get("study")); }, controles: drawControls, incidentes: drawIncidents, fuentes: drawSources })[key]();
   if (move && changed) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
@@ -361,6 +378,15 @@ document.addEventListener("click", event => {
   const data = origin.dataset;
   if (data.action === "assistant") openAssistant();
   if (data.action === "method") openMethod();
+  if (data.action === "export-selection") {
+    const study = studies.find(item => item.id === state.study);
+    const url = URL.createObjectURL(new Blob([modelingCsv(study, selectedRows(study))], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = study.id + "-seleccion.csv";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
   if (data.action === "reset-table") {
     resetTable();
     drawExperiments();
@@ -383,11 +409,6 @@ document.addEventListener("click", event => {
     state.fuel = fuel;
     state.outcome = data.outcome;
     location.hash = "experimentos";
-  }
-  if (data.mission) {
-    state.mission = data.mission;
-    drawRanking();
-    focusCurrent(`[data-mission="${data.mission}"]`);
   }
   if (data.evidence) openEvidence(data.evidence);
   if (data.camera) {
@@ -421,6 +442,11 @@ document.addEventListener("input", event => {
 
 document.addEventListener("change", event => {
   const { id, value } = event.target;
+  if (id === "mission-select") {
+    state.mission = value;
+    drawRanking();
+    focusCurrent("#mission-select");
+  }
   if (id === "topic-filter") {
     state.topic = value;
     drawRanking();
@@ -464,7 +490,7 @@ try {
   const response = await fetch("./data/experiments.json");
   if (!response.ok) throw new Error("Experimental data unavailable");
   studies = await response.json();
-  if (!Object.hasOwn(pages, location.hash.slice(1)) && location.hash !== "#main-content") history.replaceState(null, "", "#resumen");
+  if (!Object.hasOwn(pages, location.hash.slice(1).split("?")[0]) && location.hash !== "#main-content") history.replaceState(null, "", "#resumen");
   if (location.hash === "#main-content") history.replaceState(null, "", "#resumen");
   route({ move: false });
 } catch (error) {

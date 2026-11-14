@@ -1,4 +1,5 @@
-import { evidence, topics } from "./data/evidence.mjs";
+import { evidence, topics, missions } from "./data/evidence.mjs";
+import { modeling } from "./data/objectives.mjs";
 
 export const outcomeLabels = {
   Extinction: "Extinción",
@@ -141,7 +142,11 @@ export function retrieve(question, mission) {
 }
 
 export function missionScore(item, mission) {
-  return 2 * item.weights[mission] + item.directness;
+  const transfer = {
+    spacecraft: { "saffire-gases": 4, "saffire-scale": 4, "case-apollo13": 3, "case-mir": 2, "bass-flow": 2, "same-aerosols": 3 },
+    rover: { "saffire-gases": 4, "saffire-scale": 2, "partial-gravity": 4, "case-mir": 3, "case-apollo1": 3, "same-aerosols": 3 },
+  };
+  return 2 * (item.weights[mission] ?? transfer[mission]?.[item.id] ?? 0) + item.directness;
 }
 
 export function rankEvidence(mission) {
@@ -168,6 +173,26 @@ export function catalogStats(studies) {
 export function answerQuestion(question, mission, studies) {
   const text = normalize(question);
   const byId = new Map(studies.map(study => [study.id, study]));
+  if (/\b(motor(?:es)?|propelentes?|propulsion|cohetes?)\b/.test(text)) {
+    return { category: "Alcance del atlas", summary: "IGNIS analiza seguridad contra incendios en entornos habitables. La combustión de motores y propelentes de cohetes queda fuera del catálogo.", ids: [] };
+  }
+  if (/\b(prioriz\w*|relevan\w*)\b|investigaciones.*entorno/.test(text) && !/modelar|modelado|predictiv|exportar/.test(text)) {
+    const target = /rover|vehiculo presurizado/.test(text) ? "rover"
+      : /marte|marcian/.test(text) ? "mars" : /luna|lunar/.test(text) ? "moon"
+      : /nave tripulada|transito/.test(text) ? "spacecraft" : /estacion orbital|\beei\b/.test(text) ? "orbit" : mission;
+    const entries = rankEvidence(target).slice(0, 2);
+    return { category: missions[target].label, entries,
+      ids: [...new Set(entries.flatMap(item => [...item.studies, ...item.refs]))] };
+  }
+  if (/modelar|modelado|predictiv|exportar/.test(text)) {
+    const explicit = text.match(/\bpsi[- ]?(\d+)\b/);
+    const aliases = { "flex-2": "PSI-68", "bass-ii": "PSI-25", bass: "PSI-26", "saffire-iii": "PSI-100", "saffire-ii": "PSI-99", saffire: "PSI-98", "same-r": "PSI-101", same: "PSI-102", flex: "PSI-69" };
+    const id = explicit ? "PSI-" + explicit[1] : Object.entries(aliases)
+      .find(([name]) => new RegExp("\\b" + name.replace("-", "[- ]?") + "\\b").test(text))?.[1];
+    const picked = byId.get(id);
+    if (picked) return { category: "Datos para modelado", summary: picked.name + ". " + modeling[id][1],
+      limit: "En Experimentos puedes filtrar y exportar las variables con su DOI y fila de origen.", ids: [id] };
+  }
   const count = /\b(cuant[oa]s?|numero|conteo|cantidad|total|porcentaje|proporcion|tasa|frecuencia|cuenta)\b/.test(text);
   const flex2 = /\b(flex[- ]?(2|ii)|psi[- ]?68)\b/.test(text);
   const flex = !flex2 && /\b(flex|heptan[eo]|m[ea]thanol|metanol|psi[- ]?69)\b/.test(text);

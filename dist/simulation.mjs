@@ -78,7 +78,7 @@ function recordedValue(values, config, name) {
   return value;
 }
 
-export function mountSimulation(root, studies) {
+export function mountSimulation(root, studies, initialStudy) {
   const catalog = new Map(studies.filter(study => setups[study.id]).map(study => [study.id, study]));
   root.innerHTML = `
     <header class="page-heading sim-page-head"><div><h1 class="sr-only">Simulación</h1><p>Explora un ensayo de NASA en 3D y compara qué cambia al editar sus parámetros.</p></div></header>
@@ -290,6 +290,7 @@ export function mountSimulation(root, studies) {
     button.onclick = () => scene.rotate(button.dataset.simCamera);
   });
   selectOptions(get("study"), [...catalog.values()].map(item => [item.id, `${item.name} · ${item.id}`]));
+  if (catalog.has(initialStudy)) get("study").value = initialStudy;
   selectStudy();
   return () => { stop(); scene.dispose(); };
 }
