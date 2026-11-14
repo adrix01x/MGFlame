@@ -1,0 +1,4 @@
+*.tmp
+scripts/acquisition/
+__pycache__/
+*.tar.gz

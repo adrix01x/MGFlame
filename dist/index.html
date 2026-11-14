@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explora datos de NASA sobre combustión en microgravedad, incidentes y seguridad contra incendios en misiones espaciales.">
+  <meta name="theme-color" content="#fbfaf8">
+  <meta property="og:title" content="IGNIS · Seguridad contra incendios espaciales">
+  <meta property="og:description" content="Atlas interactivo de evidencia sobre combustión en microgravedad y seguridad de la tripulación.">
+  <title>IGNIS · Seguridad contra incendios espaciales</title>
+  <link rel="icon" href="assets/ignis.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Ir al contenido</a>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="#resumen" aria-label="IGNIS, inicio">
+        <span class="brand-mark" data-icon="mark"></span>
+        <span class="brand-text">IGNIS<span>ATLAS DE COMBUSTIÓN</span></span>
+      </a>
+      <div class="sidebar-body">
+        <span class="nav-label">EXPLORAR</span>
+        <nav class="nav">
+          <a href="#resumen" data-page="resumen" aria-current="page"><i data-icon="grid"></i>Resumen</a>
+          <a href="#experimentos" data-page="experimentos"><i data-icon="flask"></i>Experimentos</a>
+          <a href="#incidentes" data-page="incidentes"><i data-icon="clock"></i>Incidentes</a>
+          <a href="#fuentes" data-page="fuentes"><i data-icon="book"></i>Fuentes y datos</a>
+        </nav>
+        <div class="sidebar-rule"></div>
+        <button class="nav-action" type="button" data-action="assistant"><i data-icon="spark"></i>Asistente de IA<i class="nav-arrow" data-icon="external"></i></button>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="provenance"><span class="status-dot"></span><div><strong>Datos abiertos NASA</strong><small>Physical Sciences Informatics</small></div></div>
+        <span class="sidebar-credit">NASA Space Apps Challenge</span>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="top-start">
+          <button class="icon-button menu-button" id="menu-button" type="button" aria-expanded="false" aria-controls="sidebar" aria-label="Abrir menú"><i data-icon="menu"></i></button>
+          <div class="breadcrumb"><span>Atlas de combustión</span><i data-icon="chevron-right"></i><strong id="page-label">Resumen</strong></div>
+        </div>
+        <div class="top-actions">
+          <a class="button button-outline top-data" href="#fuentes"><i data-icon="download"></i>Datos originales</a>
+          <button class="button button-dark" type="button" data-action="assistant"><i data-icon="spark"></i><span>Consultar IA</span></button>
+        </div>
+      </header>
+      <main class="content" id="main-content" tabindex="-1"><p class="loading-message" role="status">Cargando evidencia del repositorio NASA PSI…</p></main>
+      <footer class="site-footer"><span>IGNIS · NASA Space Apps Challenge</span><a href="#fuentes">Fuentes y metodología <i data-icon="arrow-right"></i></a></footer>
+    </div>
+  </div>
+  <dialog id="record-dialog" class="record-dialog" aria-labelledby="record-title">
+    <div class="dialog-head"><div><span class="overline" id="record-type"></span><h2 id="record-title"></h2></div><form method="dialog"><button class="icon-button" aria-label="Cerrar detalle"><i data-icon="close"></i></button></form></div>
+    <div class="dialog-body" id="record-content"></div>
+  </dialog>
+  <dialog id="assistant-dialog" class="assistant-dialog" aria-labelledby="assistant-title">
+    <header class="assistant-header">
+      <div class="assistant-heading"><span class="assistant-mark" data-icon="spark"></span><div><h2 id="assistant-title">Asistente IGNIS</h2><p>Respuestas con fuentes de NASA</p></div></div>
+      <form method="dialog"><button class="icon-button" aria-label="Cerrar asistente"><i data-icon="close"></i></button></form>
+    </header>
+    <div class="assistant-context" id="assistant-context"></div>
+    <div class="assistant-messages" id="assistant-messages" role="log" aria-label="Conversación" aria-live="polite"></div>
+    <form class="assistant-form" id="assistant-form">
+      <label class="sr-only" for="assistant-question">Pregunta sobre la evidencia</label>
+      <div class="assistant-input"><input id="assistant-question" name="question" maxlength="260" autocomplete="off" placeholder="Pregunta sobre un estudio o incidente…" required><button class="icon-button" type="submit" aria-label="Enviar pregunta"><i data-icon="send"></i></button></div>
+      <small>La IA sintetiza el corpus local. Las respuestas incluyen sus referencias.</small>
+    </form>
+  </dialog>
+  <noscript><p class="noscript">Activa JavaScript para explorar las tablas y utilizar el asistente.</p></noscript>
+</body>
+</html>
