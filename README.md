@@ -10,7 +10,7 @@ Desde esta carpeta:
 python -m http.server 4181 --bind 127.0.0.1 --directory dist
 ```
 
-Abre [http://127.0.0.1:4181/](http://127.0.0.1:4181/). En Windows también puedes usar `py` en lugar de `python`.
+Abre [http://127.0.0.1:4181/](http://127.0.0.1:4181/). En Windows también puedes usar `py` en lugar de `python`, o hacer doble clic en `iniciar-ignis.bat`.
 
 ## Datos y procedencia
 
@@ -60,3 +60,18 @@ Para regenerar los tres GLB con Python:
 ```sh
 python scripts/build_orion_model.py
 ```
+
+## Ensayos en 3D
+
+La página **Ensayos en 3D** (`#modelos`, entrada del menú lateral) muestra cinco modelos interactivos de los ensayos del catálogo: FLEX (gota en el MDCA), BASS (ducto de flujo en la Microgravity Science Glovebox), Saffire-I y Saffire-II (unidad de flujo en Cygnus) y SAME (carrusel de muestras y detectores de humo). Cada modelo incluye una animación de la secuencia del ensayo con fases y velocidad ajustables, puntos de interés con explicación, regla de escala, datos de referencia, fuentes, descarga del GLB y realidad aumentada en móviles compatibles. Reutiliza el visor `model-viewer` y los estilos de **Nave tripulada**, y enlaza con las tablas de **Experimentos** y la **Simulación**. Se puede abrir un modelo directamente con `#modelos?modelo=flex|bass|saffire-i|saffire-ii|same`.
+
+FLEX, BASS y Saffire usan dimensiones publicadas por NASA: cámara del CIR de 40 × 90 cm, ducto BASS de 7,6 × 7,6 × 20 cm, ducto Saffire de 46 × 51 cm con muestra de 94 × 40,6 cm. SAME es un esquema conceptual porque no hay planos acotados públicos. Las animaciones comprimen el tiempo y no reproducen velocidades medidas.
+
+Para regenerar los modelos, el manifiesto y las miniaturas con Blender:
+
+```sh
+blender -b -P scripts/build_experiment_models.py -- --render
+# o con el módulo de Python: pip install bpy && python scripts/build_experiment_models.py --render
+```
+
+Los modelos, miniaturas y `manifest.json` (títulos, datos, fuentes y posiciones de los puntos) están en `dist/assets/experimentos/`; la interfaz está en `dist/models3d.mjs`.

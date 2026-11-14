@@ -1,0 +1,542 @@
+{
+  "modelos": [
+    {
+      "id": "flex",
+      "titulo": "FLEX · gota en microgravedad",
+      "experimento": "Flame Extinguishment Experiment (FLEX)",
+      "lugar": "Multi-user Droplet Combustion Apparatus dentro del Combustion Integrated Rack, módulo Destiny, EEI",
+      "escala": "Primer plano a escala real: gota inicial de 3 mm; la regla mide 10 mm.",
+      "resumen": "Dos agujas opuestas forman la gota y se retiran. Dos ignitores de hilo caliente la encienden y se apartan. Sin flotabilidad, la llama es una esfera azul alrededor de la gota. El diámetro de la gota decrece según la ley d² y la llama se extingue por radiación antes de consumir el combustible; la gota sigue evaporándose, que es la señal de las llamas frías que FLEX descubrió con heptano.",
+      "datos": [
+        [
+          "Cámara de combustión",
+          "100 L; Ø interior 40 cm × 90 cm"
+        ],
+        [
+          "Gotas típicas",
+          "1–5 mm (aquí 3 mm)"
+        ],
+        [
+          "Combustibles",
+          "n-heptano, metanol, mezclas"
+        ],
+        [
+          "Periodo",
+          "marzo 2009 – diciembre 2011"
+        ]
+      ],
+      "hotspots": [
+        {
+          "nombre": "Gota_combustible",
+          "titulo": "Gota de combustible",
+          "texto": "Queda libre, sin soporte, tras retirar las agujas.",
+          "posicion": [
+            0.0,
+            0.0,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Llama_esferica",
+          "titulo": "Llama esférica",
+          "texto": "Sin convección natural la llama rodea la gota de forma simétrica.",
+          "posicion": [
+            -0.0,
+            0.0,
+            -0.008
+          ]
+        },
+        {
+          "nombre": "Aguja_der",
+          "titulo": "Aguja de despliegue",
+          "texto": "Dos agujas forman un puente líquido y se retraen.",
+          "posicion": [
+            0.0035,
+            0.0,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Ignitor_fondo",
+          "titulo": "Ignitor de hilo caliente",
+          "texto": "Se energiza y se retira de inmediato para no perturbar la llama.",
+          "posicion": [
+            0.0,
+            -0.006,
+            -0.01
+          ]
+        }
+      ],
+      "fases": [
+        [
+          0,
+          "Despliegue de la gota"
+        ],
+        [
+          1.5,
+          "Ignición"
+        ],
+        [
+          1.9,
+          "Combustión (ley d²)"
+        ],
+        [
+          6.5,
+          "Extinción radiativa"
+        ],
+        [
+          7.0,
+          "Evaporación sin llama visible"
+        ]
+      ],
+      "fuentes": [
+        [
+          "FLEX en NASA PSI",
+          "https://doi.org/10.60555/mbq8-0451"
+        ],
+        [
+          "Resultados FLEX 2009–2011 (NTRS)",
+          "https://ntrs.nasa.gov/citations/20150023456"
+        ],
+        [
+          "CIR y MDCA (O'Malley y Myhre)",
+          "https://ntrs.nasa.gov/api/citations/20030032248/downloads/20030032248.pdf"
+        ]
+      ],
+      "archivo": "assets/experimentos/flex.glb",
+      "bytes": 258276,
+      "duracion_s": 10.0,
+      "poster": "assets/experimentos/flex.webp"
+    },
+    {
+      "id": "bass",
+      "titulo": "BASS · llama sobre tela en flujo",
+      "experimento": "Burning and Suppression of Solids (BASS y BASS-II)",
+      "lugar": "Microgravity Science Glovebox, módulo Destiny, EEI",
+      "escala": "Escala real: ducto de 7,6 × 7,6 × 20 cm; muestra de 10 × 2,2 cm; regla de 5 cm.",
+      "resumen": "Un ventilador impone un flujo lento a lo largo del ducto. El hilo caliente enciende la muestra de SIBAL en su extremo de entrada y la llama avanza en el mismo sentido que el aire (flujo concurrente), con base azul y cola luminosa por hollín. Si el flujo baja demasiado, la llama se apaga por enfriamiento radiativo.",
+      "datos": [
+        [
+          "Sección del ducto",
+          "7,6 × 7,6 cm"
+        ],
+        [
+          "Velocidad del aire",
+          "1 a 55 cm/s"
+        ],
+        [
+          "Muestras",
+          "telas finas, PMMA, esferas, varillas y velas"
+        ],
+        [
+          "Ensayos",
+          "BASS: 41 muestras, 115 quemas"
+        ]
+      ],
+      "hotspots": [
+        {
+          "nombre": "Llama_concurrente",
+          "titulo": "Llama concurrente",
+          "texto": "Avanza con el aire; su longitud crece con la velocidad del flujo.",
+          "posicion": [
+            -0.04,
+            0.012,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Muestra_SIBAL",
+          "titulo": "Muestra SIBAL",
+          "texto": "Tela de 0,33 mm: 75 % algodón y 25 % fibra de vidrio.",
+          "posicion": [
+            0.06,
+            0.0,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Ignitor",
+          "titulo": "Ignitor",
+          "texto": "Hilo de Kanthal en el borde de entrada de la muestra.",
+          "posicion": [
+            -0.056,
+            0.0,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Ventilador",
+          "titulo": "Ventilador",
+          "texto": "Arrastra el aire a velocidad controlada.",
+          "posicion": [
+            0.14,
+            0.0,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Ventana_superior",
+          "titulo": "Ventana superior",
+          "texto": "La cámara digital fotografía la llama desde arriba.",
+          "posicion": [
+            -0.0,
+            0.04,
+            -0.0
+          ]
+        }
+      ],
+      "fases": [
+        [
+          0,
+          "Flujo establecido"
+        ],
+        [
+          0.5,
+          "Ignición"
+        ],
+        [
+          2.0,
+          "Propagación concurrente"
+        ],
+        [
+          10.0,
+          "Combustión completa"
+        ]
+      ],
+      "fuentes": [
+        [
+          "BASS en NASA PSI",
+          "https://doi.org/10.60555/58h4-dy80"
+        ],
+        [
+          "BASS-II en NASA PSI",
+          "https://doi.org/10.60555/4qc4-de67"
+        ],
+        [
+          "Resultados BASS-II (NTRS)",
+          "https://ntrs.nasa.gov/citations/20160000593"
+        ]
+      ],
+      "archivo": "assets/experimentos/bass.glb",
+      "bytes": 175416,
+      "duracion_s": 12.0,
+      "poster": "assets/experimentos/bass.webp"
+    },
+    {
+      "id": "saffire-i",
+      "titulo": "Saffire-I · incendio a escala de nave",
+      "experimento": "Spacecraft Fire Safety Experiment (Saffire-I y III)",
+      "lugar": "Unidad de flujo dentro de la nave de carga Cygnus, tras desacoplarse de la EEI",
+      "escala": "Escala real: unidad de ~1,3 × 1,0 × 0,5 m; ducto de 46 × 51 cm; muestra de 94 × 40,6 cm; regla de 50 cm.",
+      "resumen": "La muestra de SIBAL, un orden de magnitud mayor que cualquier ensayo previo, está en el centro de un túnel de viento. Los ventiladores del extremo arrastran aire a 20 cm/s. El ignitor del borde de entrada la enciende y el frente de llama recorre la tela dejando residuo carbonizado. Dos cámaras miran a través de la pared de Lexan y cuatro radiómetros registran el calor.",
+      "datos": [
+        [
+          "Muestra",
+          "SIBAL 94 × 40,6 cm (52 g algodón + 17 g fibra de vidrio)"
+        ],
+        [
+          "Flujo de aire",
+          "20 cm/s (Saffire-I); mayor en Saffire-III"
+        ],
+        [
+          "Sección del ducto",
+          "46 × 51 cm"
+        ],
+        [
+          "Fechas",
+          "Saffire-I: junio 2016"
+        ]
+      ],
+      "hotspots": [
+        {
+          "nombre": "Frente_de_llama",
+          "titulo": "Frente de llama",
+          "texto": "Se propaga con el aire y deja tela carbonizada detrás.",
+          "posicion": [
+            -0.42,
+            0.22,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Muestra_SIBAL",
+          "titulo": "Muestra de 94 × 40,6 cm",
+          "texto": "Antes de Saffire, las muestras no superaban 10 cm.",
+          "posicion": [
+            0.75,
+            -0.1,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Pared_Lexan",
+          "titulo": "Pared de Lexan",
+          "texto": "Separa el ducto de la bahía de aviónica y deja ver la llama.",
+          "posicion": [
+            0.0,
+            0.0,
+            -0.23
+          ]
+        },
+        {
+          "nombre": "Camara_1",
+          "titulo": "Cámaras",
+          "texto": "Cada una cubre algo más de la mitad de la muestra.",
+          "posicion": [
+            -0.24,
+            0.06,
+            -0.34
+          ]
+        },
+        {
+          "nombre": "Ventilador_1",
+          "titulo": "Ventiladores",
+          "texto": "Aspiran el aire a través del ducto.",
+          "posicion": [
+            0.6,
+            -0.12,
+            -0.0
+          ]
+        }
+      ],
+      "fases": [
+        [
+          0,
+          "Flujo establecido"
+        ],
+        [
+          0.5,
+          "Ignición"
+        ],
+        [
+          2.5,
+          "Propagación concurrente"
+        ],
+        [
+          12.0,
+          "Extinción al final de la muestra"
+        ]
+      ],
+      "fuentes": [
+        [
+          "Saffire-I en NASA PSI",
+          "https://doi.org/10.60555/0t15-1z43"
+        ],
+        [
+          "Saffire-III en NASA PSI",
+          "https://doi.org/10.60555/040q-4h36"
+        ],
+        [
+          "Ferkul et al., The Saffire Experiment (2017)",
+          "https://discovery-pp.ucl.ac.uk/id/eprint/10069823/8/Ferkul_The_Saffire_Experiment_2017_US_National_Meeting_Final.pdf"
+        ],
+        [
+          "Ficha NASA Saffire",
+          "https://www.nasa.gov/wp-content/uploads/2025/07/spacecraft-fire-safety-demonstration-saffire.pdf"
+        ]
+      ],
+      "archivo": "assets/experimentos/saffire-i.glb",
+      "bytes": 272844,
+      "duracion_s": 13.0,
+      "poster": "assets/experimentos/saffire-i.webp"
+    },
+    {
+      "id": "saffire-ii",
+      "titulo": "Saffire-II · nueve materiales",
+      "experimento": "Spacecraft Fire Safety Experiment (Saffire-II)",
+      "lugar": "Unidad de flujo dentro de la nave de carga Cygnus",
+      "escala": "Escala real: mismas dimensiones de unidad que Saffire-I; nueve muestras de 30 × 5 cm. La distribución de materiales por posición es ilustrativa.",
+      "resumen": "La misma unidad de flujo lleva nueve muestras pequeñas de materiales de cabina (SIBAL, Nomex, PMMA plano y estructurado, silicona) para comparar su inflamabilidad. Cada una se enciende por separado; la animación muestra una.",
+      "datos": [
+        [
+          "Muestras",
+          "9 de 5 × 30 cm"
+        ],
+        [
+          "Materiales",
+          "SIBAL, Nomex, PMMA, silicona, transición PMMA–Nomex"
+        ],
+        [
+          "Flujo de aire",
+          "20–30 cm/s según la muestra"
+        ],
+        [
+          "Fecha",
+          "noviembre 2016"
+        ]
+      ],
+      "hotspots": [
+        {
+          "nombre": "Frente_de_llama",
+          "titulo": "Muestra encendida",
+          "texto": "Cada muestra tiene su propio ignitor.",
+          "posicion": [
+            -0.12,
+            0.18,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Pared_Lexan",
+          "titulo": "Pared de Lexan",
+          "texto": "Las cámaras ven las nueve muestras a la vez.",
+          "posicion": [
+            0.0,
+            0.0,
+            -0.23
+          ]
+        },
+        {
+          "nombre": "Ventilador_1",
+          "titulo": "Ventiladores",
+          "texto": "Regulan la velocidad del aire.",
+          "posicion": [
+            0.6,
+            -0.12,
+            -0.0
+          ]
+        }
+      ],
+      "fases": [
+        [
+          0,
+          "Flujo establecido"
+        ],
+        [
+          0.5,
+          "Ignición"
+        ],
+        [
+          2.5,
+          "Propagación"
+        ],
+        [
+          12.0,
+          "Extinción"
+        ]
+      ],
+      "fuentes": [
+        [
+          "Saffire-II en NASA PSI",
+          "https://doi.org/10.60555/2chp-m469"
+        ],
+        [
+          "Diseño de muestras Saffire II (NTRS)",
+          "https://ntrs.nasa.gov/api/citations/20150000894/downloads/20150000894.pdf"
+        ]
+      ],
+      "archivo": "assets/experimentos/saffire-ii.glb",
+      "bytes": 270496,
+      "duracion_s": 13.0,
+      "poster": "assets/experimentos/saffire-ii.webp"
+    },
+    {
+      "id": "same",
+      "titulo": "SAME · medir el humo en microgravedad",
+      "experimento": "Smoke Aerosol Measurement Experiment (SAME y SAME-R)",
+      "lugar": "Microgravity Science Glovebox, EEI (2007–2008 y 2010–2011)",
+      "escala": "Esquema conceptual: la disposición y las medidas son ilustrativas; la regla mide 10 cm.",
+      "resumen": "Cinco materiales de cabina se envuelven en un hilo calefactor y se montan en un carrusel giratorio. Al calentarse producen humo sin llama, que envejece en una cámara antes de pasar a seis instrumentos. El hallazgo clave: el detector fotoeléctrico de la EEI captaba bien el humo de celulosa, silicona y Pyrell, pero fallaba a menudo con las partículas finas de Teflón y Kapton, muy usados en electrónica.",
+      "datos": [
+        [
+          "Materiales",
+          "celulosa, Kapton, silicona, Teflón, Pyrell"
+        ],
+        [
+          "Variables",
+          "velocidad de calentamiento, flujo de aire, edad del humo"
+        ],
+        [
+          "Instrumentos",
+          "6 por ensayo, incluidos 2 detectores de nave"
+        ],
+        [
+          "Socio",
+          "NIST"
+        ]
+      ],
+      "hotspots": [
+        {
+          "nombre": "Carrusel",
+          "titulo": "Carrusel de muestras",
+          "texto": "Gira para colocar cada material en posición de calentamiento.",
+          "posicion": [
+            -0.12,
+            0.09,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Camara_envejecimiento",
+          "titulo": "Cámara de envejecimiento",
+          "texto": "El humo se retiene para simular el tiempo de acumulación en un incendio real.",
+          "posicion": [
+            0.08,
+            0.06,
+            -0.0
+          ]
+        },
+        {
+          "nombre": "Detector_fotoelectrico",
+          "titulo": "Detector fotoeléctrico de la EEI",
+          "texto": "Fallaba con las partículas pequeñas de Teflón y Kapton.",
+          "posicion": [
+            0.39,
+            0.03,
+            -0.075
+          ]
+        },
+        {
+          "nombre": "Detector_ionizacion",
+          "titulo": "Detector de ionización",
+          "texto": "Modelo del transbordador; solo algo mejor con Teflón.",
+          "posicion": [
+            0.325,
+            0.03,
+            -0.075
+          ]
+        }
+      ],
+      "fases": [
+        [
+          0,
+          "Celulosa"
+        ],
+        [
+          2.5,
+          "Kapton"
+        ],
+        [
+          5.0,
+          "Silicona"
+        ],
+        [
+          7.5,
+          "Teflón"
+        ],
+        [
+          10.0,
+          "Pyrell"
+        ]
+      ],
+      "fuentes": [
+        [
+          "SAME en NASA PSI",
+          "https://doi.org/10.60555/gd4k-8h62"
+        ],
+        [
+          "SAME-R en NASA PSI",
+          "https://doi.org/10.60555/2np7-jv14"
+        ],
+        [
+          "Meyer et al., Fire Safety Journal 98 (2018)",
+          "https://doi.org/10.1016/j.firesaf.2018.04.004"
+        ]
+      ],
+      "archivo": "assets/experimentos/same.glb",
+      "bytes": 810628,
+      "duracion_s": 12.5,
+      "poster": "assets/experimentos/same.webp"
+    }
+  ]
+}

@@ -1,11 +1,12 @@
 import { icon, initIcons } from "./icons.mjs";
 import { mountSimulation } from "./simulation.mjs";
 import { mountShip } from "./ship.mjs";
+import { mountModels } from "./models3d.mjs";
 import { sources, evidence, incidents, transfers, topics, missions } from "./data/evidence.mjs";
 import { modeling, modelingCsv, controlResearch } from "./data/objectives.mjs";
 import { answerQuestion, catalogStats, countFlex, missionScore, normalize, outcomeLabels, rankEvidence } from "./analysis.mjs";
 
-const pages = { inicio: "Inicio", resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", nave: "Nave tripulada", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
+const pages = { inicio: "Inicio", resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", modelos: "Ensayos en 3D", nave: "Nave tripulada", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
 const fuelLabels = { all: "Todos", Methanol: "Metanol", Heptane: "Heptano" };
 const outcomeColors = { Extinction: "orange", Disruption: "teal", Completion: "purple" };
 const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
@@ -384,6 +385,7 @@ function route({ move = true } = {}) {
   disposePage = ({
     inicio: drawHome, resumen: drawOverview, experimentos: drawExperiments,
     simulacion: () => mountSimulation(main, studies, new URLSearchParams(query).get("study")),
+    modelos: () => mountModels(main, loadViewer, new URLSearchParams(query).get("modelo")),
     nave: () => mountShip(main, loadViewer), controles: drawControls, incidentes: drawIncidents, fuentes: drawSources,
   })[key]();
   if (move && changed) {
