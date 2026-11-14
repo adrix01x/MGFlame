@@ -1,29 +1,31 @@
-.overview-page {
+.dashboard {
   --sidebar: 78px;
   --line: #dcded9;
   --surface: #eef0eb;
   --paper: #e1e3de;
+  --orange-ink: #414c83;
+  --shadow: 0 1px 2px #2a332909;
   background: var(--paper);
 }
-.overview-page .sidebar { background: #e1e3de; }
-.overview-page .brand { justify-content: center; padding: 0; border-bottom: 0; min-height: 75px; }
-.overview-page .brand-mark { background: #292e2b; }
-.overview-page .brand-text, .overview-page .sidebar-bottom, .overview-page .nav-label { display: none; }
-.overview-page .sidebar-body { padding: 14px 13px; }
-.overview-page .nav { gap: 8px; }
-.overview-page .nav a, .overview-page .nav-action { justify-content: center; font-size: 0; gap: 0; }
-.overview-page .nav .icon, .overview-page .nav-action .icon:first-child { width: 21px; height: 21px; }
-.overview-page .nav-action .nav-arrow { display: none; }
-.overview-page .nav a[aria-current="page"] { background: #f8f9f5; border-color: #f8f9f5; color: #272c29; box-shadow: 0 2px 5px #1719110b; }
-.overview-page .topbar { background: transparent; border-bottom: 0; min-height: 75px; padding-inline: clamp(18px, 2.4vw, 37px); }
-.overview-page .breadcrumb span, .overview-page .breadcrumb i { display: none; }
-.overview-page .breadcrumb strong { font-size: clamp(23px, 2.75vw, 39px); letter-spacing: -.065em; }
-.overview-page .topbar .button-outline { background: #eff0eb; }
-.overview-page .content { padding: 8px clamp(18px, 2.4vw, 37px) 0; }
+.dashboard .sidebar { background: #e1e3de; }
+.dashboard .brand { justify-content: center; padding: 0; border-bottom: 0; min-height: 75px; }
+.dashboard .brand-mark { background: #292e2b; }
+.dashboard .brand-text, .dashboard .sidebar-bottom, .dashboard .nav-label { display: none; }
+.dashboard .sidebar-body { padding: 14px 13px; }
+.dashboard .nav { gap: 8px; }
+.dashboard .nav a, .dashboard .nav-action { justify-content: center; font-size: 0; gap: 0; }
+.dashboard .nav .icon, .dashboard .nav-action .icon:first-child { width: 21px; height: 21px; }
+.dashboard .nav-action .nav-arrow { display: none; }
+.dashboard .nav a[aria-current="page"] { background: #f8f9f5; border-color: #f8f9f5; color: #272c29; box-shadow: 0 2px 5px #1719110b; }
+.dashboard .topbar { background: transparent; border-bottom: 0; min-height: 75px; padding-inline: clamp(18px, 2.4vw, 37px); }
+.dashboard .breadcrumb span, .dashboard .breadcrumb i { display: none; }
+.dashboard .breadcrumb strong { font-size: clamp(23px, 2.75vw, 39px); letter-spacing: -.065em; }
+.dashboard .topbar .button-outline { background: #eff0eb; }
+.dashboard .content { padding: 8px clamp(18px, 2.4vw, 37px) 0; }
 .control-room { display:grid; grid-template-columns: minmax(0, 43fr) minmax(0, 57fr); gap: 13px; }
 .control-left, .control-right { min-width: 0; display: grid; gap: 13px; align-content: start; }
 .control-right { grid-template-rows: auto 1fr; }
-.control-room .card { border: 1px solid #fafbf68c; border-radius: 13px; box-shadow: 0 1px 2px #2a332909; }
+.dashboard .card { border-color: #fafbf6a6; border-radius: 13px; }
 .station-panel { position:relative; isolation:isolate; min-height: 430px; display:flex; flex-direction:column; }
 .station-head, .station-foot { display:flex; justify-content:space-between; align-items:start; gap: 8px; padding: 14px 6px; }
 .station-head h2 { margin-top: 5px; font-size: clamp(24px, 2.9vw, 42px); line-height:.99; }
@@ -93,17 +95,42 @@ model-viewer:not(:defined) .station-poster { position:absolute; inset:0; }
 .log-row small { color:#595f56; font-size:9px; margin-top:3px; }
 .log-arrow { width:12px; color:#5d665a; }
 
+.dashboard .button-outline, .dashboard .icon-button { background: #f6f7f2; border-color: #dce0d6; }
+.dashboard .button-outline:hover, .dashboard .icon-button:hover:not(:disabled) { background: #fff; }
+.dashboard :is(button,a,select,input,[tabindex="0"]):focus-visible { outline-color: #616ccb; }
+.dashboard .page-heading { padding: 5px 0 16px; }
+.dashboard .page-heading p { margin-top: 4px; }
+.dashboard .page-heading .overline { color: #535d52; }
+.dashboard .input-wrap { background:#f7f8f3; border-color:#dce0d6; }
+.dashboard .dataset-note { background:#e3e6f4; border-color:#d9dded; color:#414c75; }
+.dashboard th { background:#e3e6de; border-color:#d7dbd1; }
+.dashboard td { border-color:#dce0d6; }
+.dashboard tbody tr:hover, .dashboard .source-row:hover { background:#f7f8f3; }
+.dashboard .table-bottom { background:var(--surface); }
+.dashboard .incident-lesson { background:#e3e6f4; }
+.dashboard .incident-lesson :is(.overline,p) { color:#414c75; }
+.dashboard .transfer .metric-icon { background:#e0e3f6; color:#3e4c99; }
+.dashboard dialog { background:var(--surface); border-color:#dce0d6; }
+.dashboard .assistant-mark, .dashboard .assistant-context strong { background:#e0e3f6; color:#3e4c99; }
+.dashboard .bot-message, .dashboard .suggestions button { background:#f7f8f3; border-color:#dce0d6; }
+.dashboard .suggestions button:hover { background:#e3e6f4; }
+.dashboard .suggestions button, .dashboard .bot-message > .overline { color:#414c83; }
+.dashboard .assistant-input .icon-button { background:#292e2b; color:white; border-color:#292e2b; }
+.dashboard .assistant-input .icon-button:hover { background:#40453e; }
+
 @media (min-width:651px) and (max-width:1050px) {
   .control-room { grid-template-columns:minmax(0, 40fr) minmax(0, 60fr); }
   .control-bottom { grid-template-columns:1fr; }
   .control-room .stats { grid-template-columns:1fr 1fr; }
 }
 @media (max-width:650px) {
-  .overview-page .topbar { min-height:55px; padding-inline:12px; }
-  .overview-page .breadcrumb strong { font-size:24px; }
-  .overview-page .content { padding:0 11px; }
-  .overview-page .sidebar { width:200px; }
-  .overview-page .nav a, .overview-page .nav-action { font-size:13px; justify-content:start; gap:9px; }
+  .dashboard .topbar { min-height:55px; padding-inline:12px; }
+  .dashboard .breadcrumb strong { font-size:24px; }
+  .dashboard .content { padding:0 11px; }
+  .dashboard .sidebar { width:200px; }
+  .dashboard .brand { min-height:60px; justify-content:start; padding-inline:16px; }
+  .dashboard .brand-text { display:block; }
+  .dashboard .nav a, .dashboard .nav-action { font-size:13px; justify-content:start; gap:9px; }
   .control-room { grid-template-columns:1fr; }
   .station-panel { min-height:330px; }
   .station-viewport, model-viewer { min-height:235px; }

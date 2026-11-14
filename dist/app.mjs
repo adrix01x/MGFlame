@@ -137,7 +137,7 @@ function drawRanking() {
 }
 
 function pageHead(eyebrow, title, description, actions = "") {
-  return `<header class="page-heading"><div><span class="overline">${eyebrow}</span><h1>${title}</h1><p>${description}</p></div>${actions}</header>`;
+  return `<header class="page-heading"><div><span class="overline">${eyebrow}</span><h1 class="sr-only">${title}</h1><p>${description}</p></div>${actions}</header>`;
 }
 
 function studySelection() {
@@ -329,7 +329,6 @@ function route({ move = true } = {}) {
   if (!Object.hasOwn(pages, key) || !studies.length) return;
   const changed = state.page !== key;
   state.page = key;
-  document.body.classList.toggle("overview-page", key === "resumen");
   document.querySelector("#page-label").textContent = pages[key];
   document.querySelectorAll("[data-page]").forEach(link => {
     if (link.dataset.page === key) link.setAttribute("aria-current", "page");
