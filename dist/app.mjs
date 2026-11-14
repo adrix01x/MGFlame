@@ -1,8 +1,9 @@
 import { icon, initIcons } from "./icons.mjs";
+import { mountSimulation } from "./simulation.mjs";
 import { sources, evidence, incidents, transfers, topics, missions } from "./data/evidence.mjs";
 import { answerQuestion, catalogStats, countFlex, missionScore, normalize, outcomeLabels, rankEvidence } from "./analysis.mjs";
 
-const pages = { resumen: "Resumen", experimentos: "Experimentos", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
+const pages = { resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
 const fuelLabels = { all: "Todos", Methanol: "Metanol", Heptane: "Heptano" };
 const outcomeColors = { Extinction: "orange", Disruption: "teal", Completion: "purple" };
 const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
@@ -72,7 +73,7 @@ function drawOverview() {
       <section class="card flex-card" aria-labelledby="flex-title">
         <div class="card-heading"><div><h2 id="flex-title">Cómo terminan los ensayos</h2><p class="section-description">Combustión de gotas en microgravedad.</p></div><span class="station-chip">${icon("chart")} PSI-69 · FLEX</span></div>
         <div id="flex-interaction"></div>
-        <div class="card-foot"><a class="text-link" href="#experimentos" data-study-link="PSI-69">Ver tabla FLEX ${icon("arrow-right")}</a><span class="mono muted">EEI · CIR</span></div>
+        <div class="card-foot"><a class="text-link" href="#experimentos" data-study-link="PSI-69">Ver tabla FLEX ${icon("arrow-right")}</a><a class="text-link" href="#simulacion">Simular en 3D ${icon("play")}</a></div>
       </section>
       <div class="control-bottom"><section class="card insights-card" aria-labelledby="insights-title">
         <div class="card-heading"><h2 id="insights-title">Hallazgos prioritarios</h2></div>
@@ -324,6 +325,8 @@ function closeMenu() {
   document.querySelector("#menu-button").setAttribute("aria-expanded", "false");
 }
 
+let disposeSimulation;
+
 function route({ move = true } = {}) {
   const key = location.hash.slice(1) || "resumen";
   if (!Object.hasOwn(pages, key) || !studies.length) return;
@@ -335,7 +338,9 @@ function route({ move = true } = {}) {
     else link.removeAttribute("aria-current");
   });
   closeMenu();
-  ({ resumen: drawOverview, experimentos: drawExperiments, incidentes: drawIncidents, fuentes: drawSources })[key]();
+  disposeSimulation?.();
+  disposeSimulation = undefined;
+  ({ resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies); }, incidentes: drawIncidents, fuentes: drawSources })[key]();
   if (move && changed) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });

@@ -1,0 +1,26 @@
+.simulation-layout { display:grid; grid-template-columns:minmax(0,1.8fr) minmax(285px,1fr); gap:14px; align-items:start; }
+.sim-stage, .sim-controls { padding:17px; }
+.sim-stage-head { display:flex; justify-content:space-between; align-items:start; gap:10px; margin-bottom:12px; }
+.sim-stage-head h2, .sim-controls h2 { font-size:23px; }
+.sim-viewport { position:relative; border:1px solid #dce0d6; border-radius:10px; overflow:hidden; background:radial-gradient(ellipse at center,#fcfcf6,#e0e4dc); }
+.sim-viewport canvas { display:block; width:100%; height:clamp(240px,38vw,450px); cursor:grab; touch-action:none; }
+.sim-viewport canvas:active { cursor:grabbing; }
+.sim-overlay { position:absolute; top:10px; left:10px; background:#f7f8f3; border-radius:6px; padding:5px 8px; font-size:11px; pointer-events:none; }
+.sim-camera { position:absolute; right:10px; bottom:10px; display:flex; gap:4px; }
+.sim-transport { display:flex; flex-wrap:wrap; align-items:center; gap:7px; margin-top:12px; }
+.sim-transport input { flex:1; min-width:80px; }
+.sim-transport output { min-width:62px; text-align:right; font-size:10px; }
+.sim-transport select, .sim-controls select { border-radius:7px; border:1px solid #dce0d6; background:#f7f8f3; padding:7px; min-width:0; }
+.sim-controls { display:grid; gap:12px; }
+.sim-controls label { display:grid; gap:6px; font-size:12px; font-weight:620; min-width:0; }
+.sim-controls label select { width:100%; font-size:12px; }
+.sim-controls .segmented { width:max-content; background:#e3e6de; }
+.sim-controls .segmented button { min-height:32px; padding-inline:10px; }
+.simulation-layout input[type="range"] { accent-color:#616ccb; }
+.sim-metrics { border-top:1px solid #dce0d6; font-size:12px; }
+.sim-metrics div { display:flex; justify-content:space-between; align-items:start; gap:8px; padding:6px 0; border-bottom:1px solid #dce0d6; }
+.sim-metrics dd { margin:0; font-family:var(--mono); text-align:right; }
+.sim-note { color:#4c5677; background:#e3e6f4; padding:8px; border-radius:7px; font-size:11px; line-height:1.5; }
+@media (max-width:850px) {
+  .simulation-layout { grid-template-columns:1fr; }
+}
