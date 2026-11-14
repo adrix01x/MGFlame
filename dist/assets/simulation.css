@@ -21,6 +21,9 @@
 .sim-metrics div { display:flex; justify-content:space-between; align-items:start; gap:8px; padding:6px 0; border-bottom:1px solid #dce0d6; }
 .sim-metrics dd { margin:0; font-family:var(--mono); text-align:right; }
 .sim-note { color:#4c5677; background:#e3e6f4; padding:8px; border-radius:7px; font-size:11px; line-height:1.5; }
+.sim-fields { display:grid; gap:8px; max-height:380px; overflow:auto; padding:3px 5px; }
+.sim-fields input { width:100%; min-width:0; padding:7px; border:1px solid #d0d5cd; background:#f8f9f6; border-radius:6px; }
+.sim-fields input[readonly] { background:#e7ebe3; }
 @media (max-width:850px) {
   .simulation-layout { grid-template-columns:1fr; }
 }

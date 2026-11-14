@@ -1,40 +1,29 @@
 import { icon } from "./icons.mjs";
-import { outcomeLabels } from "./analysis.mjs";
 import { createScene } from "./simulation-scene.mjs";
 
 const format = new Intl.NumberFormat("es", { maximumFractionDigits: 2 });
-const fuels = { Methanol: "Metanol", Heptane: "Heptano" };
-const directions = { Concurrent: "Concurrente", Opposed: "Opuesto" };
 const num = value => format.format(value);
 
-function experiments(studies) {
-  const flex = studies.find(study => study.id === "PSI-69");
-  const saffire = studies.find(study => study.id === "PSI-98");
-  return {
-    flex: {
-      study: flex, axis: "Combustible", variable: "Diámetro inicial", unit: "mm", min: .5, max: 6, step: .01,
-      runs: flex.rows.filter(({values}) => Number(values[13]) > 0 && Number(values[10]) > 0 && fuels[values[4]])
-        .map(({values, line, label}) => ({
-          line, label, group: values[4], groupLabel: fuels[values[4]], duration: Number(values[13]),
-          size: Number(values[10]), oxygen: values[6], pressure: values[5], outcome: outcomeLabels[values[14]] ?? values[14],
-        })),
-    },
-    saffire: {
-      study: saffire, axis: "Dirección del flujo", variable: "Velocidad del aire", unit: "cm/s", min: 0, max: 40, step: 1,
-      runs: saffire.rows.filter(({kind}) => kind === "observation").map(({values, line, label}) => ({
-        line, label, group: values[10], groupLabel: directions[values[10]], duration: Number(values[9]),
-        size: Number(values[5]), oxygen: values[6], width: values[3], length: values[4],
-      })),
-    },
-  };
+// Columns in the original PSI tables. Duration is only shown when reported.
+const setups = {
+  "PSI-69": { scene: "flex", sample: 4, size: 10, duration: 13, oxygen: 6, outcome: 14 },
+  "PSI-68": { scene: "flex", sample: 0, size: 1, oxygen: 3, flow: 6 },
+  "PSI-25": { scene: "solid", sample: 5, oxygen: 11 },
+  "PSI-26": { scene: "solid", sample: 5 },
+  "PSI-98": { scene: "solid", sample: 1, flow: 5, direction: 10, duration: 9, length: 4, width: 3, oxygen: 6 },
+  "PSI-99": { scene: "solid", sample: 1, flow: 5, direction: 10, duration: 9, length: 3, width: 4, oxygen: 6 },
+  "PSI-100": { scene: "solid", sample: 1, flow: 5, direction: 6, length: 3, width: 4 },
+  "PSI-101": { scene: "aerosol", sample: 0, flow: 4, duration: 6, aging: 9 },
+  "PSI-102": { scene: "aerosol", sample: 1, flow: 2, aging: 4 },
+};
+
+function scalar(value, fallback) {
+  const match = /^([+-]?(?:\d+(?:[.,]\d+)?|\.\d+))\s*(?:mm|cm|cm\/s|s|sec|%|min)?$/i.exec((value ?? "").trim());
+  return match ? Number(match[1].replace(",", ".")) : fallback;
 }
 
-const runLabel = (key, run) => key === "flex"
-  ? `Ensayo ${run.label} · ${num(run.size)} mm · ${num(Number(run.oxygen) * 100)} % O₂ · ${run.outcome}`
-  : `Muestra ${run.label} · ${run.groupLabel} · ${num(run.duration)} s`;
-
 export function mountSimulation(root, studies) {
-  const catalog = experiments(studies);
+  const catalog = new Map(studies.filter(study => setups[study.id]).map(study => [study.id, study]));
   root.innerHTML = `
     <header class="page-heading"><div><span class="overline">LABORATORIO INTERACTIVO</span><h1 class="sr-only">Simulación</h1><p>Reproduce un ensayo de NASA o cambia los parámetros en una escena 3D.</p></div></header>
     <div class="simulation-layout">
@@ -58,15 +47,13 @@ export function mountSimulation(root, studies) {
       </section>
       <section class="card sim-controls" aria-labelledby="sim-controls-title">
         <h2 id="sim-controls-title">Parámetros del ensayo</h2>
-        <label>Experimento<select id="sim-study"><option value="flex">FLEX · Gotas de combustible</option><option value="saffire">Saffire-I · Propagación en tela</option></select></label>
+        <label>Experimento<select id="sim-study"></select></label>
         <div class="segmented" role="group" aria-label="Modo de simulación">
           <button type="button" data-sim-mode="record" aria-pressed="true">NASA PSI</button>
           <button type="button" data-sim-mode="custom" aria-pressed="false">Personalizado</button>
         </div>
-        <label><span id="sim-axis"></span><select id="sim-group"></select></label>
-        <label id="sim-record-field">Corrida registrada<select id="sim-run"></select></label>
-        <label id="sim-variable-field" hidden><span id="sim-variable"></span><input id="sim-size" type="range"></label>
-        <dl class="sim-metrics" id="sim-metrics"></dl>
+        <label>Registro de referencia<select id="sim-run"></select></label>
+        <div id="sim-fields" class="sim-fields"></div>
         <p class="sim-note" id="sim-note"></p>
         <a class="text-link" id="sim-source" target="_blank" rel="noopener">Ficha y DOI del experimento ${icon("arrow-up-right")}</a>
       </section>
@@ -74,22 +61,31 @@ export function mountSimulation(root, studies) {
 
   const get = id => root.querySelector("#sim-" + id);
   const canvas = root.querySelector(".sim-viewport canvas");
-  let key = "flex", mode = "record", run, size, group, fraction = 0, playing = false, frame, previous, speed = 1;
+  let study, config, mode = "record", run, values, fraction = 0, playing = false, frame, previous, speed = 1;
   const scene = createScene(canvas, () => draw());
   const selectOptions = (select, options) => select.replaceChildren(...options.map(([value, label]) => new Option(label, value)));
   const displaySeconds = seconds => `${num(seconds)} s`;
-  const playbackLength = () => mode === "record" ? Math.min(26, Math.max(4, run.duration)) : 9;
+  const duration = () => scalar(values[config.duration], 0);
+  const playbackLength = () => duration() > 0 ? Math.min(26, Math.max(4, duration())) : 9;
 
   function draw() {
     if (!run) return;
-    scene.render({ key, size, reverse: group === "Opposed", fraction, finish: mode === "record", fuel: group });
+    const sample = values[config.sample] ?? "";
+    const oxygen = scalar(values[config.oxygen], 21);
+    scene.render({ key: config.scene, size: scalar(values[config.size], 2),
+      flow: scalar(values[config.flow], config.scene === "flex" ? 0 : 8),
+      reverse: /opuest|oppos/i.test(values[config.direction] ?? ""), fraction,
+      finish: true, fuel: sample, oxygen: oxygen <= 1 ? oxygen * 100 : oxygen,
+      length: scalar(values[config.length], 65), width: scalar(values[config.width], 35),
+      aging: scalar(values[config.aging], 20),
+    });
     get("time").value = Math.round(fraction * 1000);
-    get("clock").value = mode === "record"
-      ? `${displaySeconds(fraction * run.duration)} / ${displaySeconds(run.duration)}`
+    get("clock").value = duration() > 0
+      ? `${displaySeconds(fraction * duration())} / ${displaySeconds(duration())}`
       : `${Math.round(fraction * 100)} %`;
     get("time").setAttribute("aria-valuetext", get("clock").value);
     get("phase").textContent = fraction === 0 ? "Inicio" : fraction === 1
-      ? (mode === "record" ? run.outcome ?? "Fin del registro" : "Fin de la animación")
+      ? "Fin de la reproducción"
       : "Reproducción esquemática";
   }
 
@@ -116,64 +112,47 @@ export function mountSimulation(root, studies) {
     draw();
   }
 
-  function metrics() {
-    const config = catalog[key];
-    get("variable").textContent = `${config.variable} · ${num(size)} ${config.unit}`;
-    const entries = [[config.variable, `${num(size)} ${config.unit}`]];
-    if (mode === "record") {
-      entries.push(["Duración registrada", displaySeconds(run.duration)], ["Fila del CSV", run.line]);
-      if (key === "flex") entries.push(["Oxígeno inicial", `${num(Number(run.oxygen) * 100)} %`], ["Presión inicial", `${num(Number(run.pressure))} mmHg`]);
-      else entries.push(["Dimensiones de la muestra", `${run.width} × ${run.length} cm`]);
-    }
-    get("metrics").replaceChildren(...entries.map(([label, value]) => {
-      const wrapper = document.createElement("div");
-      const term = document.createElement("dt");
-      term.textContent = label;
-      const detail = document.createElement("dd");
-      detail.textContent = value;
-      wrapper.append(term, detail);
-      return wrapper;
+  function fields() {
+    const visual = new Set(Object.entries(config).filter(([name]) => !["scene", "outcome"].includes(name)).map(([, index]) => index));
+    get("fields").replaceChildren(...study.headers.map((header, index) => {
+      const label = document.createElement("label");
+      const title = document.createElement("span");
+      title.textContent = header + (mode === "custom" && visual.has(index) ? " · escena" : "");
+      const input = document.createElement("input");
+      input.value = values[index];
+      input.placeholder = "Sin dato";
+      input.readOnly = mode === "record";
+      input.oninput = () => { values[index] = input.value; draw(); };
+      label.append(title, input);
+      return label;
     }));
-    get("note").textContent = mode === "record"
-      ? "La duración y las condiciones vienen del CSV. La geometría, el avance y la llama son ilustrativos. Los ensayos largos se aceleran en pantalla."
-      : "El control cambia el tamaño de la gota o las partículas del flujo. La animación personalizada es didáctica y carece de un modelo físico validado.";
+    const note = run.kind === "conditions"
+      ? "Esta fila describe condiciones o referencias. El avance es ilustrativo."
+      : `Fila ${run.line} del CSV. El avance y la geometría son esquemáticos.`;
+    get("note").textContent = mode === "record" ? note
+      : "Los campos marcados «escena» afectan la visualización o el reloj. Los demás son editables como contexto; el modelo no calcula resultados físicos.";
   }
 
   function selectRun() {
-    run = catalog[key].runs.find(candidate => candidate.line === Number(get("run").value));
-    size = run.size;
-    get("size").value = size;
-    metrics();
+    run = study.rows.find(candidate => candidate.line === Number(get("run").value));
+    values = [...run.values];
+    fields();
     reset();
   }
 
-  function selectGroup() {
-    group = get("group").value;
-    selectOptions(get("run"), catalog[key].runs.filter(run => run.group === group).map(run => [run.line, runLabel(key, run)]));
-    if (mode === "record") selectRun();
-    else reset();
-  }
-
   function selectStudy() {
-    key = get("study").value;
-    const config = catalog[key];
-    const { study } = config;
+    study = catalog.get(get("study").value);
+    config = setups[study.id];
     get("accession").textContent = `${study.id} · ${study.mission}`;
     get("scene-title").textContent = study.name;
-    get("axis").textContent = config.axis;
     get("source").href = "https://doi.org/" + study.doi;
-    Object.assign(get("size"), { min: config.min, max: config.max, step: config.step });
-    selectOptions(get("group"), [...new Map(config.runs.map(item => [item.group, item.groupLabel]))]);
-    const custom = mode === "custom";
-    mode = "record";
-    selectGroup();
-    if (custom) { mode = "custom"; metrics(); draw(); }
+    selectOptions(get("run"), study.rows.map(row => [row.line,
+      `${row.kind === "conditions" ? "Condiciones" : "Registro"} ${row.label} · ${row.sample || "Fila " + row.line}`]));
+    selectRun();
   }
 
   get("study").onchange = selectStudy;
-  get("group").onchange = selectGroup;
   get("run").onchange = selectRun;
-  get("size").oninput = () => { size = Number(get("size").value); metrics(); draw(); };
   get("speed").onchange = () => { speed = Number(get("speed").value); };
   get("reset").onclick = reset;
   get("time").oninput = () => { stop(); fraction = Number(get("time").value) / 1000; draw(); };
@@ -188,15 +167,13 @@ export function mountSimulation(root, studies) {
     button.onclick = () => {
       mode = button.dataset.simMode;
       root.querySelectorAll("[data-sim-mode]").forEach(tab => tab.setAttribute("aria-pressed", String(tab === button)));
-      get("record-field").hidden = mode !== "record";
-      get("variable-field").hidden = mode !== "custom";
-      if (mode === "record") selectRun();
-      else { metrics(); reset(); }
+      selectRun();
     };
   });
   root.querySelectorAll("[data-sim-camera]").forEach(button => {
     button.onclick = () => scene.rotate(button.dataset.simCamera);
   });
+  selectOptions(get("study"), [...catalog.values()].map(item => [item.id, `${item.name} · ${item.id}`]));
   selectStudy();
   return () => { stop(); scene.dispose(); };
 }
