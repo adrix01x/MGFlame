@@ -4,7 +4,7 @@ import { sources, evidence, incidents, transfers, topics, missions } from "./dat
 import { modeling, modelingCsv, controlResearch } from "./data/objectives.mjs";
 import { answerQuestion, catalogStats, countFlex, missionScore, normalize, outcomeLabels, rankEvidence } from "./analysis.mjs";
 
-const pages = { resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
+const pages = { inicio: "Inicio", resumen: "Resumen", experimentos: "Experimentos", simulacion: "Simulación", controles: "Controles de seguridad", incidentes: "Incidentes", fuentes: "Fuentes y datos" };
 const fuelLabels = { all: "Todos", Methanol: "Metanol", Heptane: "Heptano" };
 const outcomeColors = { Extinction: "orange", Disruption: "teal", Completion: "purple" };
 const number = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 });
@@ -45,6 +45,25 @@ function missionButtons() {
 }
 
 let viewerModule;
+
+function drawHome() {
+  const stats = catalogStats(studies);
+  main.innerHTML = `
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="home-copy">
+        <span class="overline">IGNIS · NASA SPACE APPS CHALLENGE</span>
+        <h1 id="home-title">El fuego en microgravedad</h1>
+        <p>Explora cómo se comporta el fuego en el espacio y qué evidencia puede ayudar a proteger a las tripulaciones.</p>
+        <div class="home-actions"><a class="button home-primary" href="#resumen">Abrir dashboard ${icon("arrow-right")}</a><a class="button home-secondary" href="#simulacion">${icon("play")} Explorar en 3D</a></div>
+      </div>
+      <a class="home-credit" href="https://science.nasa.gov/image-article/apod-2021-august-10-fire-in-space/" target="_blank" rel="noopener">Llama en microgravedad · NASA ${icon("arrow-up-right")}</a>
+    </section>
+    <nav class="home-paths" aria-label="Explorar IGNIS">
+      <a class="card" href="#resumen"><span class="metric-icon purple">${icon("chart")}</span><div><h2>Prioriza la evidencia</h2><p>Explora hallazgos para cinco entornos habitables.</p></div>${icon("arrow-right")}</a>
+      <a class="card" href="#experimentos"><span class="metric-icon teal">${icon("database")}</span><div><h2>Extrae datos para modelado</h2><p>Filtra ${stats.observations} observaciones de ${studies.length} investigaciones de NASA.</p></div>${icon("arrow-right")}</a>
+      <a class="card" href="#controles"><span class="metric-icon blue">${icon("shield")}</span><div><h2>Explora controles de seguridad</h2><p>Consulta estudios sobre detección, extinción y protección.</p></div>${icon("arrow-right")}</a>
+    </nav>`;
+}
 
 function drawOverview() {
   const stats = catalogStats(studies);
@@ -345,7 +364,7 @@ function closeMenu() {
 let disposeSimulation;
 
 function route({ move = true } = {}) {
-  const [key = "resumen", query] = (location.hash.slice(1) || "resumen").split("?");
+  const [key = "inicio", query] = (location.hash.slice(1) || "inicio").split("?");
   if (!Object.hasOwn(pages, key) || !studies.length) return;
   const changed = state.page !== key;
   state.page = key;
@@ -357,7 +376,7 @@ function route({ move = true } = {}) {
   closeMenu();
   disposeSimulation?.();
   disposeSimulation = undefined;
-  ({ resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies, new URLSearchParams(query).get("study")); }, controles: drawControls, incidentes: drawIncidents, fuentes: drawSources })[key]();
+  ({ inicio: drawHome, resumen: drawOverview, experimentos: drawExperiments, simulacion: () => { disposeSimulation = mountSimulation(main, studies, new URLSearchParams(query).get("study")); }, controles: drawControls, incidentes: drawIncidents, fuentes: drawSources })[key]();
   if (move && changed) {
     window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
@@ -490,8 +509,7 @@ try {
   const response = await fetch("./data/experiments.json");
   if (!response.ok) throw new Error("Experimental data unavailable");
   studies = await response.json();
-  if (!Object.hasOwn(pages, location.hash.slice(1).split("?")[0]) && location.hash !== "#main-content") history.replaceState(null, "", "#resumen");
-  if (location.hash === "#main-content") history.replaceState(null, "", "#resumen");
+  if (location.hash && !Object.hasOwn(pages, location.hash.slice(1).split("?")[0])) history.replaceState(null, "", "#inicio");
   route({ move: false });
 } catch (error) {
   console.error(error);
